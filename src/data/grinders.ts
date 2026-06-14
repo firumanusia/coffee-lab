@@ -21,6 +21,21 @@ export const GRINDERS: Grinder[] = [
   { id: 'df64', brand: 'DF64', model: 'Gen 2', type: 'electric', micronPerStep: 10, range: [180, 1100], notes: { id: 'Single-dose stepless.', en: 'Single-dose stepless.' } },
   { id: 'eureka-mignon', brand: 'Eureka', model: 'Mignon Specialita', type: 'electric', micronPerStep: 8, range: [180, 900], notes: { id: 'Stepless, lebih ke espresso/filter.', en: 'Stepless, espresso/filter.' } },
   { id: 'wilfa-svart', brand: 'Wilfa', model: 'Uniform', type: 'electric', micronPerStep: 25, range: [300, 1200], notes: { id: 'Dirancang untuk brew filter.', en: 'Designed for filter brewing.' } },
+
+  // More hand grinders
+  { id: 'timemore-c2', brand: 'Timemore', model: 'Chestnut C2', type: 'hand', micronPerStep: 36, range: [250, 1200], notes: { id: 'Versi awal yang terjangkau.', en: 'Affordable earlier model.' } },
+  { id: '1z-x-pro', brand: '1Zpresso', model: 'X-Pro / X-Ultra', type: 'hand', micronPerStep: 15, range: [200, 1100], notes: { id: 'Dial atas, cepat disetel.', en: 'Top dial, quick to adjust.' } },
+  { id: '1z-zp6', brand: '1Zpresso', model: 'ZP6 Special', type: 'hand', micronPerStep: 25, range: [400, 1300], notes: { id: 'Burr khusus filter — clarity tinggi.', en: 'Filter-dedicated burr — high clarity.' } },
+  { id: 'kinu-m47', brand: 'Kinu', model: 'M47', type: 'hand', micronPerStep: 10, range: [180, 1100], notes: { id: 'Stepless, build logam premium.', en: 'Stepless, premium metal build.' } },
+  { id: 'kingrinder-k4', brand: 'Kingrinder', model: 'K4', type: 'hand', micronPerStep: 18, range: [180, 1100], notes: { id: 'Dial eksternal value.', en: 'External-dial value option.' } },
+  { id: 'hario-skerton', brand: 'Hario', model: 'Skerton Pro', type: 'hand', micronPerStep: 50, range: [400, 1300], notes: { id: 'Entry ceramic burr, kurang seragam.', en: 'Entry ceramic burr, less uniform.' } },
+
+  // More electric grinders
+  { id: 'fellow-opus', brand: 'Fellow', model: 'Opus', type: 'electric', micronPerStep: 35, range: [200, 1400], notes: { id: 'All-purpose, espresso–cold brew.', en: 'All-purpose, espresso–cold brew.' } },
+  { id: 'mahlkonig-x54', brand: 'Mahlkönig', model: 'X54', type: 'electric', micronPerStep: 20, range: [200, 1200], notes: { id: 'Home grinder kelas kafe.', en: 'Café-grade home grinder.' } },
+  { id: 'option-o-lagom', brand: 'Option-O', model: 'Lagom Mini', type: 'electric', micronPerStep: 8, range: [180, 1100], notes: { id: 'Single-dose stepless presisi.', en: 'Precise single-dose stepless.' } },
+  { id: 'comandante-c40-e', brand: 'Weber', model: 'Key', type: 'electric', micronPerStep: 6, range: [180, 1100], notes: { id: 'High-end stepless, sangat seragam.', en: 'High-end stepless, very uniform.' } },
+  { id: 'varia-evo', brand: 'Varia', model: 'EVO', type: 'electric', micronPerStep: 9, range: [180, 1200], notes: { id: 'Flat+conical, fleksibel.', en: 'Flat+conical, flexible.' } },
 ]
 
 /** Suggested setting (clicks/steps from closed) for a target micron. */

@@ -31,24 +31,29 @@ export function predict(c: BrewConfig): Prediction {
   const totalWater = c.dose * c.ratio
   const beverageMass = Math.max(1, totalWater - c.dose * ABSORPTION)
 
-  // Flow & contact time
+  // Flow & contact time. ~5 g/s is a realistic average drawdown rate for a
+  // medium V60 grind; geometry/filter and grind scale it from there.
   const combinedFlow = dripper.flowFactor * filter.flowFactor
-  const flowRate = round1(7 * combinedFlow * (c.micron / 650)) // ml/s, finer = slower
+  const flowRate = round1(clamp(5 * combinedFlow * (c.micron / 650), 1.5, 14)) // g/s
   const lastPourAt = c.pours.length ? Math.max(...c.pours.map((p) => p.at)) : 0
-  const drawdown = Math.max(25, totalWater / Math.max(2.5, flowRate))
+  const drawdown = Math.max(25, totalWater / flowRate)
   const brewTimeSec = Math.round(lastPourAt + drawdown)
 
-  // Extraction yield estimate
-  const grindAdj = ((650 - c.micron) / 100) * 0.8 // finer → higher
-  const tempAdj = (c.tempC - 93) * 0.18
-  const contactAdj = (1 / combinedFlow - 1) * 4 // slower drawdown → higher
+  // Extraction yield estimate (additive contributions in EY % points, each
+  // bounded so no single lever dominates, then modest roast/process factors).
+  const grindAdj = clamp(((700 - c.micron) / 100) * 0.9, -5, 5) // finer → higher
+  const tempAdj = clamp((c.tempC - 93) * 0.25, -3, 3) // hotter → higher
+  const contactAdj = clamp(-Math.log(combinedFlow) * 3, -3, 4) // slower drawdown → higher
   const aggressive = c.pours.filter((p) => p.style === 'aggressive' || p.style === 'pulse').length
-  const agitationAdj = (c.pours.length - 3) * 0.35 + aggressive * 0.4
+  const agitationAdj = clamp((c.pours.length - 3) * 0.3 + aggressive * 0.5, -1.5, 3)
 
-  let ey = 20 + grindAdj + tempAdj + contactAdj + agitationAdj
-  ey *= roast.extraction
-  ey *= 0.94 + process.extraction * 0.06 // small process nudge
-  ey = clamp(ey, 13, 27)
+  // Roast: darker beans are more soluble; process nudges slightly. Kept modest
+  // (multipliers ~0.95–1.09) so grind/temp/flow remain the primary drivers.
+  const roastFactor = 1 + (roast.extraction - 1) * 0.5
+  const processFactor = 1 + (process.extraction - 1) * 0.4
+
+  let ey = (19.5 + grindAdj + tempAdj + contactAdj + agitationAdj) * roastFactor * processFactor
+  ey = clamp(ey, 14, 26)
 
   // TDS from mass balance: dissolved solids / beverage mass
   let tds = clamp((c.dose * (ey / 100)) / beverageMass * 100, 0.6, 1.9)
