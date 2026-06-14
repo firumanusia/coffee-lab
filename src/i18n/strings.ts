@@ -136,4 +136,11 @@ export const STR: Dict = {
   low: { id: 'rendah', en: 'low' },
   high: { id: 'tinggi', en: 'high' },
   cancel: { id: 'Batal', en: 'Cancel' },
+
+  // mobile bottom-nav tabs
+  navBeans: { id: 'Biji', en: 'Beans' },
+  navSetup: { id: 'Setup', en: 'Setup' },
+  navRecipe: { id: 'Resep', en: 'Recipe' },
+  navBrew: { id: 'Seduh', en: 'Brew' },
+  navLog: { id: 'Riwayat', en: 'Log' },
 }
