@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BrewLab — Kalkulator Seduh Kopi Interaktif</title>
+<style>
+  :root{
+    --bg:#f6efe6;
+    --panel:#ffffff;
+    --panel2:#faf4ec;
+    --line:#e6d9c9;
+    --text:#3a2c20;
+    --muted:#8a7864;
+    --accent:#c1632d;
+    --accent2:#a44d1f;
+    --good:#5e8c42;
+    --shadow:0 10px 34px rgba(120,84,48,.16);
+    --r:16px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    font-family:'Segoe UI',system-ui,-apple-system,sans-serif;
+    background:radial-gradient(1200px 600px at 70% -10%,#fff7ec 0%,var(--bg) 55%);
+    color:var(--text);
+    min-height:100vh;
+    line-height:1.5;
+    padding:24px 16px 60px;
+  }
+  .wrap{max-width:1180px;margin:0 auto}
+  header.top{text-align:center;margin-bottom:28px}
+  .brand{font-size:clamp(28px,5vw,44px);font-weight:800;letter-spacing:-1px}
+  .brand .b1{color:var(--accent)}
+  .brand .b2{color:var(--text)}
+  .tag{color:var(--muted);font-size:15px;margin-top:6px}
+  .grid{display:grid;grid-template-columns:1.15fr .85fr;gap:22px;align-items:start}
+  @media(max-width:900px){.grid{grid-template-columns:1fr}}
+  .card{
+    background:linear-gradient(180deg,var(--panel) 0%,var(--panel2) 100%);
+    border:1px solid var(--line);
+    border-radius:var(--r);
+    padding:22px;
+    box-shadow:var(--shadow);
+  }
+  .card h2{font-size:13px;text-transform:uppercase;letter-spacing:2px;color:var(--accent);margin-bottom:18px;font-weight:700}
+  .block{margin-bottom:24px}
+  .block:last-child{margin-bottom:0}
+  label.lab{display:flex;justify-content:space-between;align-items:baseline;font-size:14px;font-weight:600;margin-bottom:10px}
+  label.lab .val{color:var(--accent);font-variant-numeric:tabular-nums;font-weight:700}
+  /* sliders */
+  input[type=range]{
+    -webkit-appearance:none;appearance:none;width:100%;height:7px;border-radius:10px;
+    background:linear-gradient(90deg,var(--accent2),var(--accent));outline:none;cursor:pointer;
+  }
+  input[type=range].plain{background:#e0d2c0}
+  input[type=range]::-webkit-slider-thumb{
+    -webkit-appearance:none;width:22px;height:22px;border-radius:50%;
+    background:#fff;border:3px solid var(--accent2);cursor:pointer;box-shadow:0 2px 6px rgba(0,0,0,.4);
+  }
+  input[type=range]::-moz-range-thumb{
+    width:22px;height:22px;border-radius:50%;background:#fff;border:3px solid var(--accent2);cursor:pointer;
+  }
+  .scalelabels{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-top:7px}
+  /* roast swatch */
+  .roastbar{display:flex;align-items:center;gap:14px;margin-top:14px}
+  .bean{width:46px;height:46px;border-radius:50%;border:2px solid rgba(255,255,255,.15);box-shadow:inset -4px -4px 8px rgba(0,0,0,.4);transition:background .25s}
+  .roastname{font-size:18px;font-weight:700}
+  .roastdesc{font-size:13px;color:var(--muted)}
+  /* dripper buttons */
+  .drippers{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+  @media(max-width:520px){.drippers{grid-template-columns:repeat(2,1fr)}}
+  .dbtn{
+    background:var(--panel2);border:1.5px solid var(--line);border-radius:12px;
+    padding:12px 8px;text-align:center;cursor:pointer;transition:.18s;color:var(--text);
+  }
+  .dbtn:hover{border-color:var(--accent);transform:translateY(-2px)}
+  .dbtn.active{border-color:var(--accent);background:rgba(217,154,78,.14);box-shadow:0 0 0 1px var(--accent) inset}
+  .dbtn .dicon{font-size:26px;line-height:1}
+  .dbtn .dname{font-size:12.5px;font-weight:700;margin-top:6px}
+  .dbtn .dtype{font-size:10.5px;color:var(--muted);margin-top:2px}
+  /* dose stepper */
+  .stepper{display:flex;align-items:center;gap:0;width:100%}
+  .stepper button{
+    width:46px;height:46px;border:1px solid var(--line);background:var(--panel2);color:var(--text);
+    font-size:22px;cursor:pointer;border-radius:12px;transition:.15s
+  }
+  .stepper button:hover{border-color:var(--accent);color:var(--accent)}
+  .stepper input{
+    flex:1;text-align:center;background:transparent;border:none;color:var(--text);
+    font-size:24px;font-weight:800;width:60px
+  }
+  .stepper .unit{color:var(--muted);font-size:14px;padding-right:8px}
+  /* output metrics */
+  .metrics{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .metric{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:14px}
+  .metric .mlab{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--muted)}
+  .metric .mval{font-size:24px;font-weight:800;margin-top:4px;font-variant-numeric:tabular-nums}
+  .metric .mval small{font-size:14px;color:var(--muted);font-weight:600}
+  .metric .msub{font-size:12px;color:var(--accent);margin-top:3px}
+  /* gauges */
+  .gauge{height:8px;background:#ece0d0;border-radius:6px;margin-top:9px;overflow:hidden}
+  .gauge>span{display:block;height:100%;border-radius:6px;transition:width .3s}
+  /* timeline */
+  .timeline{margin-top:6px}
+  .pour{
+    display:grid;grid-template-columns:64px 1fr auto;gap:12px;align-items:center;
+    padding:11px 12px;border:1px solid var(--line);border-radius:11px;margin-bottom:8px;
+    background:var(--panel2);transition:.2s;position:relative;overflow:hidden
+  }
+  .pour.done{opacity:.5}
+  .pour.active{border-color:var(--accent);background:rgba(217,154,78,.16);box-shadow:0 0 0 1px var(--accent) inset}
+  .pour .ptime{font-weight:800;font-variant-numeric:tabular-nums;color:var(--accent);font-size:15px}
+  .pour .pname{font-weight:700;font-size:14px}
+  .pour .pdesc{font-size:12px;color:var(--muted)}
+  .pour .pwater{font-weight:800;font-size:16px;text-align:right;font-variant-numeric:tabular-nums}
+  .pour .pwater small{display:block;font-size:11px;color:var(--muted);font-weight:600}
+  /* timer */
+  .timerbar{display:flex;align-items:center;gap:14px;margin-bottom:16px;flex-wrap:wrap}
+  .clock{font-size:40px;font-weight:800;font-variant-numeric:tabular-nums;letter-spacing:1px}
+  .tbtn{
+    border:none;border-radius:10px;padding:11px 20px;font-size:14px;font-weight:700;cursor:pointer;transition:.15s
+  }
+  .tbtn.start{background:var(--accent);color:#1a1410}
+  .tbtn.start:hover{background:#e8ab5e}
+  .tbtn.reset{background:transparent;border:1px solid var(--line);color:var(--muted)}
+  .tbtn.reset:hover{border-color:var(--accent2);color:var(--text)}
+  .nowpour{font-size:13px;color:var(--muted);min-width:120px}
+  .nowpour b{color:var(--accent);font-size:15px}
+  .tips{font-size:13px;color:var(--muted);background:var(--panel2);border-left:3px solid var(--accent);border-radius:8px;padding:12px 14px;margin-top:4px}
+  .tips b{color:var(--text)}
+  .flowwrap{display:flex;align-items:center;gap:10px;margin-top:10px}
+  .flowdots{display:flex;gap:4px}
+  .flowdots i{width:9px;height:9px;border-radius:50%;background:#e0d2c0;display:block}
+  .flowdots i.on{background:var(--accent)}
+  .ratioline{display:flex;justify-content:space-between;font-size:13px;color:var(--muted);margin-top:8px}
+  footer{text-align:center;color:var(--muted);font-size:12.5px;margin-top:34px;line-height:1.7}
+  .pill{display:inline-block;background:var(--panel2);border:1px solid var(--line);border-radius:20px;padding:3px 11px;font-size:12px;color:var(--accent);margin:0 3px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="brand"><span class="b1">Brew</span><span class="b2">Lab</span> ☕</div>
+    <div class="tag">Kalkulator seduh manual interaktif — sesuaikan suhu, gilingan, rasio &amp; tuangan untuk tiap profil sangrai</div>
+  </header>
+
+  <div class="grid">
+    <!-- ============ INPUT ============ -->
+    <div class="card">
+      <h2>1 · Atur Variabel</h2>
+
+      <div class="block">
+        <label class="lab">Profil Sangrai (Roast)
+          <span class="val" id="roastVal">Medium</span>
+        </label>
+        <input type="range" id="roast" min="0" max="100" value="50">
+        <div class="scalelabels"><span>Ultra Light</span><span>Light</span><span>Medium</span><span>Med-Dark</span><span>Dark</span></div>
+        <div class="roastbar">
+          <div class="bean" id="bean"></div>
+          <div>
+            <div class="roastname" id="roastName">Medium Roast</div>
+            <div class="roastdesc" id="roastDesc"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="block">
+        <label class="lab">Jenis Dripper</label>
+        <div class="drippers" id="drippers"></div>
+      </div>
+
+      <div class="block">
+        <label class="lab">Dosis Kopi
+          <span class="val"><span id="doseEcho">18</span> g</span>
+        </label>
+        <div class="stepper">
+          <button id="doseMinus">−</button>
+          <input type="number" id="dose" value="18" min="8" max="60" step="0.5">
+          <span class="unit">gram</span>
+          <button id="dosePlus">+</button>
+        </div>
+      </div>
+
+      <div class="block">
+        <label class="lab">Rasio Kopi : Air
+          <span class="val">1 : <span id="ratioVal">16.0</span></span>
+        </label>
+        <input type="range" class="plain" id="ratio" min="13" max="19" value="16" step="0.5">
+        <div class="ratioline">
+          <span>Pekat &amp; kuat (1:13)</span>
+          <span id="ratioRec"></span>
+          <span>Ringan &amp; teh-like (1:19)</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ OUTPUT RESEP ============ -->
+    <div class="card">
+      <h2>2 · Resep Rekomendasi</h2>
+      <div class="metrics">
+        <div class="metric">
+          <div class="mlab">Suhu Air</div>
+          <div class="mval" id="tempVal">92<small>°C</small></div>
+          <div class="gauge"><span id="tempGauge" style="background:linear-gradient(90deg,#5b8def,#e8534e)"></span></div>
+        </div>
+        <div class="metric">
+          <div class="mlab">Ukuran Gilingan</div>
+          <div class="mval" id="grindVal" style="font-size:20px">Medium</div>
+          <div class="msub" id="grindMicron">~700 µm</div>
+          <div class="gauge"><span id="grindGauge" style="background:linear-gradient(90deg,#d99a4e,#7a5230)"></span></div>
+        </div>
+        <div class="metric">
+          <div class="mlab">Total Air</div>
+          <div class="mval" id="waterVal">288<small>g</small></div>
+          <div class="msub" id="brewYield"></div>
+        </div>
+        <div class="metric">
+          <div class="mlab">Estimasi Total Waktu</div>
+          <div class="mval" id="timeVal">2:45</div>
+          <div class="msub" id="flowText">Flow sedang</div>
+        </div>
+      </div>
+
+      <div class="block" style="margin-top:20px">
+        <label class="lab">Kecepatan Flow Rate
+          <span class="val" id="flowRate">~4 ml/s</span>
+        </label>
+        <div class="flowwrap">
+          <div class="flowdots" id="flowDots"></div>
+          <span style="font-size:12.5px;color:var(--muted)" id="flowAdvice"></span>
+        </div>
+      </div>
+
+      <div class="tips" id="tipBox"></div>
+    </div>
+  </div>
+
+  <!-- ============ TIMELINE / TIMER ============ -->
+  <div class="card" style="margin-top:22px">
+    <h2>3 · Jadwal Tuangan &amp; Timer</h2>
+    <div class="timerbar">
+      <div class="clock" id="clock">0:00</div>
+      <button class="tbtn start" id="timerBtn">▶ Mulai Seduh</button>
+      <button class="tbtn reset" id="resetBtn">Reset</button>
+      <div class="nowpour" id="nowPour">Tekan mulai untuk memandu tuangan secara real-time.</div>
+    </div>
+    <div class="timeline" id="timeline"></div>
+  </div>
+
+  <footer>
+    Disesuaikan dengan prinsip ekstraksi: sangrai terang butuh
+    <span class="pill">suhu tinggi</span><span class="pill">giling halus</span> untuk ekstraksi maksimal,
+    sangrai gelap butuh <span class="pill">suhu rendah</span><span class="pill">giling kasar</span> agar tidak pahit.<br>
+    BrewLab · alat bantu edukatif — selalu sesuaikan dengan selera &amp; alat gilingmu sendiri.
+  </footer>
+</div>
+
+<script>
+/* =================== DATA MODEL =================== */
+const roastProfiles = [ // anchor points 0..100
+  {p:0,   name:"Ultra Light (Nordic)", color:"#a9783f", desc:"Sangat asam-cerah, floral. Padat & sulit diekstrak.", temp:99, grind:0.30, ratio:16.5},
+  {p:25,  name:"Light Roast",          color:"#8a5a30", desc:"Asam cerah, fruity, body tipis-sedang.",            temp:96, grind:0.40, ratio:16.5},
+  {p:50,  name:"Medium Roast",         color:"#5e3a20", desc:"Seimbang manis-asam, karamel, body sedang.",        temp:92, grind:0.52, ratio:16.0},
+  {p:75,  name:"Medium-Dark Roast",    color:"#3f261533", desc:"Cokelat, body tebal, asam rendah.",              temp:88, grind:0.66, ratio:15.5},
+  {p:100, name:"Dark Roast",           color:"#2a160c", desc:"Bold, smoky-pahit, oily. Mudah over-extract.",      temp:83, grind:0.80, ratio:15.5}
+];
+
+const drippers = {
+  v60:    {name:"Hario V60",   icon:"🔻", type:"Kerucut · cepat",      flow:0.92, tempAdj:0,  grindAdj:-0.04, pours:4, brewBase:155,
+           tip:"Tuang melingkar konstan dari tengah ke luar. Jaga ketinggian air stabil (pulse pour) agar bed merata."},
+  kalita: {name:"Kalita Wave", icon:"〰️", type:"Flat · 3 lubang",     flow:0.62, tempAdj:0,  grindAdj:0.03,  pours:4, brewBase:185,
+           tip:"Dasar datar = ekstraksi lebih merata & toleran. Tuang pelan di tengah, biarkan kertas wave menahan flow."},
+  chemex: {name:"Chemex",      icon:"⏳", type:"Kerucut · filter tebal",flow:0.45, tempAdj:1,  grindAdj:0.12,  pours:3, brewBase:240,
+           tip:"Filter tebal memperlambat flow → giling lebih kasar. Hasil sangat bersih (clean cup), body ringan."},
+  origami:{name:"Origami",     icon:"🌸", type:"Kerucut · fleksibel",  flow:0.85, tempAdj:0,  grindAdj:-0.02, pours:4, brewBase:165,
+           tip:"Dengan filter kerucut flow mirip V60; dengan filter wave lebih lambat. Rusuk tinggi = flow lancar."},
+  switch: {name:"Hario Switch",icon:"🔘", type:"Imersi + perkolasi",   flow:0.55, tempAdj:0,  grindAdj:0.06,  pours:2, brewBase:210,
+           tip:"Tutup katup untuk steeping (imersi), buka untuk drain. Hybrid: body imersi + kejernihan pour-over."},
+  clever: {name:"Clever",      icon:"🫙", type:"Imersi penuh",         flow:0.50, tempAdj:-1, grindAdj:0.10,  pours:1, brewBase:225,
+           tip:"Full immersion: tuang sekali, aduk, tunggu, lalu buka drain. Anti-gagal & konsisten, body tebal."}
+};
+
+let state = {roast:50, dripper:"v60", dose:18, ratio:16};
+
+/* =================== HELPERS =================== */
+function lerp(a,b,t){return a+(b-a)*t;}
+function interpRoast(p){
+  let lo=roastProfiles[0], hi=roastProfiles[roastProfiles.length-1];
+  for(let i=0;i<roastProfiles.length-1;i++){
+    if(p>=roastProfiles[i].p && p<=roastProfiles[i+1].p){lo=roastProfiles[i];hi=roastProfiles[i+1];break;}
+  }
+  const t=(p-lo.p)/((hi.p-lo.p)||1);
+  return {
+    name: t<0.5?lo.name:hi.name,
+    desc: t<0.5?lo.desc:hi.desc,
+    temp: lerp(lo.temp,hi.temp,t),
+    grind: lerp(lo.grind,hi.grind,t),   // 0=fine .. 1=coarse
+    ratio: lerp(lo.ratio,hi.ratio,t)
+  };
+}
+function beanColor(p){
+  // smooth brown gradient light->dark
+  const t=p/100;
+  const r=Math.round(lerp(180,42,t));
+  const g=Math.round(lerp(120,22,t));
+  const b=Math.round(lerp(70,12,t));
+  return `rgb(${r},${g},${b})`;
+}
+function grindLabel(g){ // g 0..1
+  if(g<0.30) return "Sangat Halus";
+  if(g<0.42) return "Halus";
+  if(g<0.55) return "Medium-Halus";
+  if(g<0.66) return "Medium";
+  if(g<0.78) return "Medium-Kasar";
+  return "Kasar";
+}
+function fmtTime(s){const m=Math.floor(s/60);const ss=Math.round(s%60);return m+":"+String(ss).padStart(2,"0");}
+
+/* =================== CORE COMPUTE =================== */
+function compute(){
+  const r=interpRoast(state.roast);
+  const d=drippers[state.dripper];
+  const dose=state.dose;
+  const ratio=state.ratio;
+  const totalWater=dose*ratio;
+
+  // temperature: roast base + dripper adj
+  const temp=Math.round(r.temp + d.tempAdj);
+
+  // grind: roast base + dripper adj, clamp 0..1
+  let grind=Math.min(1,Math.max(0,r.grind + d.grindAdj));
+  const micron=Math.round(lerp(400,1100,grind)); // 400µm fine .. 1100µm coarse
+
+  // recommended ratio note
+  const recRatio=r.ratio;
+
+  // brew time: base by dripper, modified by grind(finer=slower), dose, roast
+  let brew = d.brewBase;
+  brew *= lerp(1.18,0.85,grind);          // finer -> longer
+  brew *= lerp(0.92,1.12,dose/18-0+ (dose-18)/60+0)*0; // (neutralized) keep simple
+  brew += (dose-18)*2.2;                   // more coffee -> a bit longer
+  brew = Math.max(75, brew);
+
+  // flow rate ml/s (immersion = effective drain)
+  const flowRate = (d.flow * lerp(5.6,2.4,grind)); // finer slower
+  return {r,d,dose,ratio,totalWater,temp,grind,micron,recRatio,brew,flowRate};
+}
+
+/* =================== POUR SCHEDULE =================== */
+function buildSchedule(c){
+  const {d,dose,totalWater,brew}=c;
+  const bloomWater=Math.round(dose*2.5);
+  const bloomTime=state.roast<35?45:35; // lighter roast longer bloom
+  const remaining=totalWater-bloomWater;
+  const npours=d.pours;
+  const steps=[];
+  steps.push({t:0,name:"Bloom",water:bloomWater,cum:bloomWater,
+    desc:`Basahi semua bubuk, tunggu ~${bloomTime}s biar gas CO₂ keluar.`});
+
+  if(d.name==="Clever"){
+    steps.push({t:bloomTime,name:"Tuang Penuh",water:remaining,cum:totalWater,
+      desc:"Tuang sisa air sekaligus, aduk pelan 2x. Tunggu steeping."});
+    const steep=Math.round(brew*0.55);
+    steps.push({t:bloomTime+steep,name:"Buka Drain",water:0,cum:totalWater,
+      desc:"Letakkan di atas gelas untuk drain hingga tetes terakhir."});
+  } else if(d.name==="Hario Switch"){
+    steps.push({t:bloomTime,name:"Tuang (Katup Tutup)",water:remaining,cum:totalWater,
+      desc:"Katup tertutup → imersi. Tuang sisa air, tunggu steeping."});
+    steps.push({t:bloomTime+Math.round(brew*0.45),name:"Buka Katup",water:0,cum:totalWater,
+      desc:"Buka katup untuk drain perkolasi."});
+  } else {
+    const each=remaining/npours;
+    const interval=(brew-bloomTime)/npours;
+    let cum=bloomWater;
+    for(let i=0;i<npours;i++){
+      cum+=each;
+      steps.push({
+        t:Math.round(bloomTime+interval*i),
+        name:`Tuangan ${i+1}`,
+        water:Math.round(each),
+        cum:Math.round(cum),
+        desc:i===0?"Mulai tuang melingkar dari tengah ke luar.":
+             i===npours-1?"Tuangan terakhir, ratakan bed kopi.":
+             "Tunggu air turun ±separuh sebelum tuang lagi (pulse)."
+      });
+    }
+  }
+  steps.push({t:Math.round(brew),name:"Selesai (Drawdown)",water:0,cum:Math.round(totalWater),
+    desc:"Tunggu air turun habis. Lepas dripper & nikmati ☕"});
+  return steps;
+}
+
+/* =================== RENDER =================== */
+let schedule=[];
+function render(){
+  const c=compute();
+  schedule=buildSchedule(c);
+
+  // roast
+  document.getElementById("roastVal").textContent=c.r.name.split(" ")[0]+(c.r.name.includes("Ultra")?" Light":"");
+  document.getElementById("roastName").textContent=c.r.name;
+  document.getElementById("roastDesc").textContent=c.r.desc;
+  document.getElementById("bean").style.background=beanColor(state.roast);
+
+  // metrics
+  document.getElementById("tempVal").innerHTML=c.temp+'<small>°C</small>';
+  document.getElementById("tempGauge").style.width=((c.temp-78)/(100-78)*100)+"%";
+  document.getElementById("grindVal").textContent=grindLabel(c.grind);
+  document.getElementById("grindMicron").textContent="≈ "+c.micron+" µm";
+  document.getElementById("grindGauge").style.width=(c.grind*100)+"%";
+  document.getElementById("waterVal").innerHTML=Math.round(c.totalWater)+'<small>g</small>';
+  document.getElementById("brewYield").textContent="Rasio 1:"+c.ratio.toFixed(1)+" · ±"+Math.round(c.totalWater*0.92)+"ml di gelas";
+  document.getElementById("timeVal").textContent=fmtTime(c.brew);
+
+  // flow
+  const fr=c.flowRate;
+  document.getElementById("flowRate").textContent="≈ "+fr.toFixed(1)+" ml/s";
+  let flowName = fr>4.2?"Cepat":fr>3.0?"Sedang":"Lambat";
+  document.getElementById("flowText").textContent="Flow "+flowName.toLowerCase();
+  const lvl=Math.min(5,Math.max(1,Math.round(fr/1.1)));
+  let dots="";for(let i=0;i<5;i++)dots+=`<i class="${i<lvl?'on':''}"></i>`;
+  document.getElementById("flowDots").innerHTML=dots;
+  document.getElementById("flowAdvice").textContent =
+    fr>4.2?"Tuang lebih pelan/tipis agar kontak air cukup.":
+    fr<3.0?"Flow lambat — hindari over-extract, jangan terlalu halus.":
+    "Flow ideal — tuang konstan & stabil.";
+
+  // recommended ratio note
+  document.getElementById("ratioRec").innerHTML="rekomendasi 1:"+c.recRatio.toFixed(1);
+
+  // tip
+  document.getElementById("tipBox").innerHTML="<b>"+c.d.name+":</b> "+c.d.tip;
+
+  renderTimeline();
+  // echoes
+  document.getElementById("doseEcho").textContent=state.dose;
+  document.getElementById("ratioVal").textContent=state.ratio.toFixed(1);
+}
+
+function renderTimeline(){
+  const tl=document.getElementById("timeline");
+  tl.innerHTML="";
+  schedule.forEach((s,i)=>{
+    const div=document.createElement("div");
+    div.className="pour";div.dataset.i=i;div.dataset.t=s.t;
+    div.innerHTML=`
+      <div class="ptime">${fmtTime(s.t)}</div>
+      <div><div class="pname">${s.name}</div><div class="pdesc">${s.desc}</div></div>
+      <div class="pwater">${s.water>0?"+"+s.water+"g":"—"}<small>total ${s.cum}g</small></div>`;
+    tl.appendChild(div);
+  });
+  highlightPour(timerSec);
+}
+
+/* =================== DRIPPER BUTTONS =================== */
+const dripWrap=document.getElementById("drippers");
+Object.entries(drippers).forEach(([k,v])=>{
+  const b=document.createElement("div");
+  b.className="dbtn"+(k===state.dripper?" active":"");
+  b.dataset.k=k;
+  b.innerHTML=`<div class="dicon">${v.icon}</div><div class="dname">${v.name}</div><div class="dtype">${v.type}</div>`;
+  b.onclick=()=>{state.dripper=k;document.querySelectorAll(".dbtn").forEach(x=>x.classList.remove("active"));b.classList.add("active");render();};
+  dripWrap.appendChild(b);
+});
+
+/* =================== INPUT BINDINGS =================== */
+const roastEl=document.getElementById("roast");
+roastEl.oninput=e=>{state.roast=+e.target.value;render();};
+const ratioEl=document.getElementById("ratio");
+ratioEl.oninput=e=>{state.ratio=+e.target.value;render();};
+const doseEl=document.getElementById("dose");
+function setDose(v){v=Math.min(60,Math.max(8,Math.round(v*2)/2));state.dose=v;doseEl.value=v;render();}
+doseEl.oninput=e=>setDose(+e.target.value||18);
+document.getElementById("dosePlus").onclick=()=>setDose(state.dose+0.5);
+document.getElementById("doseMinus").onclick=()=>setDose(state.dose-0.5);
+
+/* =================== TIMER =================== */
+let timerSec=0,timerInt=null,running=false;
+const clockEl=document.getElementById("clock");
+const btn=document.getElementById("timerBtn");
+const nowPour=document.getElementById("nowPour");
+
+function highlightPour(sec){
+  const items=[...document.querySelectorAll(".pour")];
+  let activeIdx=-1;
+  schedule.forEach((s,i)=>{ if(sec>=s.t) activeIdx=i; });
+  items.forEach((el,i)=>{
+    el.classList.toggle("done", i<activeIdx);
+    el.classList.toggle("active", i===activeIdx && running);
+  });
+  if(running && activeIdx>=0){
+    const s=schedule[activeIdx];
+    const next=schedule[activeIdx+1];
+    nowPour.innerHTML=`<b>${s.name}</b> — ${s.water>0?"target "+s.cum+"g":"tahap akhir"}`+
+      (next?`<br>berikutnya ${fmtTime(next.t)}: ${next.name}`:"");
+  }
+}
+function tick(){
+  timerSec++;
+  clockEl.textContent=fmtTime(timerSec);
+  highlightPour(timerSec);
+  const last=schedule[schedule.length-1];
+  if(timerSec>=last.t+3){stopTimer();nowPour.innerHTML="<b>Seduhan selesai!</b> Selamat menikmati ☕";}
+}
+function startTimer(){running=true;btn.textContent="⏸ Jeda";timerInt=setInterval(tick,1000);highlightPour(timerSec);}
+function stopTimer(){running=false;btn.textContent="▶ Lanjut";clearInterval(timerInt);
+  document.querySelectorAll(".pour").forEach(p=>p.classList.remove("active"));}
+btn.onclick=()=>{running?stopTimer():startTimer();};
+document.getElementById("resetBtn").onclick=()=>{
+  stopTimer();timerSec=0;clockEl.textContent="0:00";btn.textContent="▶ Mulai Seduh";
+  nowPour.textContent="Tekan mulai untuk memandu tuangan secara real-time.";
+  document.querySelectorAll(".pour").forEach(p=>p.classList.remove("done","active"));
+};
+
+/* init */
+render();
+</script>
+</body>
+</html>
