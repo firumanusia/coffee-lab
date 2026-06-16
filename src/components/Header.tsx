@@ -6,7 +6,7 @@ export function Header() {
     <header className="mb-6 flex flex-col items-center gap-3 sm:flex-row sm:items-center sm:justify-between">
       <div className="flex flex-col items-center gap-1 sm:items-start">
         <img
-          src="/img/Logo Dark v1.png"
+          src="/img/Logo Dark v2.png"
           alt="MENOOWEL — BrewLab Studio"
           className="h-14 w-auto sm:h-16"
           width={4859}
