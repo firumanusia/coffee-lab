@@ -1,4 +1,4 @@
-# ☕ BrewLab — Manual Brewing Studio
+# MENOOWEL — BrewLab Studio
 
 An interactive, bilingual (🇮🇩/🇬🇧) studio for manual / filter coffee. Configure every
 meaningful brew variable, get a **predicted result** plotted on the **SCA Brewing

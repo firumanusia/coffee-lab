@@ -4,6 +4,7 @@ import { ROAST_BANDS, roastFromAgtron } from '../../data/roast'
 import { useLocalized, useT } from '../../i18n/LanguageContext'
 import type { BrewStore } from '../../store/useBrewStore'
 import { Panel, Select, Slider } from '../ui'
+import { Icons } from '../icons'
 
 export function BeansPanel({ store }: { store: BrewStore }) {
   const { t } = useT()
@@ -15,7 +16,7 @@ export function BeansPanel({ store }: { store: BrewStore }) {
   const roast = roastFromAgtron(config.agtron)
 
   return (
-    <Panel title={t('secBeans')} icon="🌱">
+    <Panel title={t('secBeans')} icon={<Icons.beans size={16} />}>
       <Select
         label={t('origin')}
         value={config.originId}

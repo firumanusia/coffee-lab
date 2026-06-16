@@ -3,6 +3,7 @@ import { roastFromAgtron } from '../../data/roast'
 import { useLocalized, useT } from '../../i18n/LanguageContext'
 import type { BrewStore } from '../../store/useBrewStore'
 import { Panel, Slider } from '../ui'
+import { Icons } from '../icons'
 
 export function WaterPanel({ store }: { store: BrewStore }) {
   const { t } = useT()
@@ -12,7 +13,7 @@ export function WaterPanel({ store }: { store: BrewStore }) {
   const roast = roastFromAgtron(config.agtron)
 
   return (
-    <Panel title={t('secWater')} icon="💧">
+    <Panel title={t('secWater')} icon={<Icons.water size={16} />}>
       <Slider
         label={t('waterTemp')}
         value={config.tempC}

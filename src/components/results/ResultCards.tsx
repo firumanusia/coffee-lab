@@ -2,6 +2,7 @@ import { predict } from '../../model/predict'
 import { useLocalized, useT } from '../../i18n/LanguageContext'
 import type { BrewStore } from '../../store/useBrewStore'
 import { Panel } from '../ui'
+import { Icons } from '../icons'
 import { SCAChart } from './SCAChart'
 
 export function ResultCards({ store }: { store: BrewStore }) {
@@ -11,7 +12,7 @@ export function ResultCards({ store }: { store: BrewStore }) {
   const p = predict(config)
 
   return (
-    <Panel title={t('secResults')} icon="📈">
+    <Panel title={t('secResults')} icon={<Icons.results size={16} />}>
       <div className="grid grid-cols-3 gap-2 text-center">
         <Metric label={t('yield')} value={`${Math.round(p.beverageMass)}`} unit="g" />
         <Metric label={t('tds')} value={p.tds.toFixed(2)} unit="%" highlight={p.source === 'measured'} />
@@ -77,7 +78,7 @@ export function ResultCards({ store }: { store: BrewStore }) {
 
 function Metric({ label, value, unit, small, highlight }: { label: string; value: string; unit?: string; small?: boolean; highlight?: boolean }) {
   return (
-    <div className={`metric ${highlight ? 'ring-1 ring-emerald-400/60' : ''}`}>
+    <div className={`metric ${highlight ? 'ring-1 ring-brand-teal/70' : ''}`}>
       <div className={small ? 'text-lg font-bold text-crema' : 'metric-value'}>
         {value}
         {unit && <span className="text-xs font-medium text-coffee-300"> {unit}</span>}

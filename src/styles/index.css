@@ -15,10 +15,10 @@ body,
 body {
   margin: 0;
   background:
-    radial-gradient(1200px 600px at 80% -10%, rgba(189, 138, 91, 0.18), transparent 60%),
-    radial-gradient(900px 500px at -10% 110%, rgba(116, 68, 45, 0.22), transparent 55%),
-    #1a120c;
-  color: #f1e7da;
+    radial-gradient(1200px 600px at 82% -12%, rgba(232, 75, 61, 0.16), transparent 60%),
+    radial-gradient(900px 520px at -10% 112%, rgba(6, 148, 148, 0.18), transparent 55%),
+    #171717;
+  color: #ece8e5;
   -webkit-font-smoothing: antialiased;
 }
 
@@ -27,28 +27,28 @@ body {
     @apply rounded-2xl border border-coffee-800/60 bg-coffee-950/40 p-4 backdrop-blur;
   }
   .panel-title {
-    @apply mb-3 flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-crema;
+    @apply mb-3 flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-brand-teal;
   }
   .field-label {
     @apply mb-1 block text-xs font-medium text-coffee-200;
   }
   .input {
-    @apply w-full rounded-lg border border-coffee-800 bg-coffee-950/60 px-3 py-2 text-sm text-coffee-50 outline-none transition focus:border-coffee-400;
+    @apply w-full rounded-lg border border-coffee-800 bg-coffee-950/60 px-3 py-2 text-sm text-coffee-50 outline-none transition focus:border-brand-teal;
   }
   .chip {
-    @apply cursor-pointer rounded-full border border-coffee-800 px-3 py-1 text-xs transition hover:border-coffee-400;
+    @apply cursor-pointer rounded-full border border-coffee-800 px-3 py-1 text-xs transition hover:border-brand-red/70;
   }
   .chip-active {
-    @apply border-coffee-400 bg-coffee-500/20 text-crema;
+    @apply border-brand-red bg-brand-red/15 text-crema;
   }
   .btn {
     @apply inline-flex items-center justify-center gap-1.5 rounded-lg px-3 py-2 text-sm font-semibold transition disabled:opacity-40;
   }
   .btn-primary {
-    @apply btn bg-coffee-500 text-coffee-950 hover:bg-coffee-400;
+    @apply btn bg-brand-red text-white hover:bg-brand-deep;
   }
   .btn-ghost {
-    @apply btn border border-coffee-800 text-coffee-100 hover:border-coffee-400;
+    @apply btn border border-coffee-700 text-coffee-100 hover:border-brand-teal;
   }
   .metric {
     @apply rounded-xl border border-coffee-800/60 bg-coffee-900/40 p-3;
@@ -66,7 +66,7 @@ input[type='range'] {
   appearance: none;
   height: 6px;
   border-radius: 999px;
-  background: linear-gradient(90deg, #915834, #bd8a5b);
+  background: linear-gradient(90deg, #069494, #e84b3d);
   outline: none;
 }
 input[type='range']::-webkit-slider-thumb {
@@ -75,15 +75,15 @@ input[type='range']::-webkit-slider-thumb {
   width: 18px;
   height: 18px;
   border-radius: 50%;
-  background: #e7c9a0;
-  border: 2px solid #5f3a2a;
+  background: #f3efec;
+  border: 2px solid #e84b3d;
   cursor: pointer;
 }
 input[type='range']::-moz-range-thumb {
   width: 18px;
   height: 18px;
   border-radius: 50%;
-  background: #e7c9a0;
-  border: 2px solid #5f3a2a;
+  background: #f3efec;
+  border: 2px solid #e84b3d;
   cursor: pointer;
 }

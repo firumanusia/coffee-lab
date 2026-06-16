@@ -3,6 +3,7 @@ import { MICRON_RANGE, grindBandFor } from '../../data/grindChart'
 import { useLocalized, useT } from '../../i18n/LanguageContext'
 import type { BrewStore } from '../../store/useBrewStore'
 import { ChipGroup, Panel, Select, Slider } from '../ui'
+import { Icons } from '../icons'
 
 export function GrindPanel({ store }: { store: BrewStore }) {
   const { t } = useT()
@@ -17,7 +18,7 @@ export function GrindPanel({ store }: { store: BrewStore }) {
   const filtered = GRINDERS.filter((g) => typeOf(g) === grinder.type)
 
   return (
-    <Panel title={t('secGrind')} icon="⚙️">
+    <Panel title={t('secGrind')} icon={<Icons.grind size={16} />}>
       <ChipGroup
         label={t('grinderType')}
         value={grinder.type}

@@ -3,10 +3,10 @@ export type Lang = 'id' | 'en'
 type Dict = Record<string, { id: string; en: string }>
 
 export const STR: Dict = {
-  appTitle: { id: 'BrewLab', en: 'BrewLab' },
+  appTitle: { id: 'MENOOWEL', en: 'MENOOWEL' },
   appTagline: {
-    id: 'Studio seduh manual — atur variabel, prediksi hasil, catat seduhan.',
-    en: 'Manual brewing studio — tune variables, predict results, log your brews.',
+    id: 'BrewLab Studio — atur variabel, prediksi hasil, catat seduhan.',
+    en: 'BrewLab Studio — tune variables, predict results, log your brews.',
   },
 
   // sections

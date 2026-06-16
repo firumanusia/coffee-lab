@@ -1,11 +1,11 @@
 import type { ReactNode } from 'react'
 
-export function Panel({ title, icon, children, aside }: { title: string; icon?: string; children: ReactNode; aside?: ReactNode }) {
+export function Panel({ title, icon, children, aside }: { title: string; icon?: ReactNode; children: ReactNode; aside?: ReactNode }) {
   return (
     <section className="panel">
       <div className="flex items-center justify-between">
         <h2 className="panel-title">
-          {icon && <span aria-hidden>{icon}</span>}
+          {icon && <span aria-hidden className="text-brand-teal">{icon}</span>}
           {title}
         </h2>
         {aside}

@@ -3,6 +3,7 @@ import { RECIPES } from '../../data/recipes'
 import { useT } from '../../i18n/LanguageContext'
 import type { BrewStore } from '../../store/useBrewStore'
 import { Panel } from '../ui'
+import { Icons } from '../icons'
 
 export function PresetBar({ store }: { store: BrewStore }) {
   const { t } = useT()
@@ -17,7 +18,7 @@ export function PresetBar({ store }: { store: BrewStore }) {
   }
 
   return (
-    <Panel title={t('secPresets')} icon="⭐">
+    <Panel title={t('secPresets')} icon={<Icons.presets size={16} />}>
       <div className="mb-3 flex gap-2">
         <input
           className="input"

@@ -3,7 +3,7 @@ import { extractionOf, strengthOf } from '../model/sca'
 import { useT } from '../i18n/LanguageContext'
 import type { BrewStore } from '../store/useBrewStore'
 
-const zoneColor = (ok: boolean) => (ok ? 'text-emerald-300' : 'text-amber-300')
+const zoneColor = (ok: boolean) => (ok ? 'text-brand-tealLight' : 'text-amber-300')
 
 export function MobileResultBar({ store, onOpen, active }: { store: BrewStore; onOpen: () => void; active: boolean }) {
   const { t } = useT()

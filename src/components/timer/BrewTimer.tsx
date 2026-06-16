@@ -4,6 +4,7 @@ import { predict } from '../../model/predict'
 import { useLocalized, useT } from '../../i18n/LanguageContext'
 import type { BrewStore } from '../../store/useBrewStore'
 import { Panel } from '../ui'
+import { Icons } from '../icons'
 
 export function BrewTimer({ store }: { store: BrewStore }) {
   const { t } = useT()
@@ -40,18 +41,18 @@ export function BrewTimer({ store }: { store: BrewStore }) {
   const progress = Math.min(100, (elapsed / Math.max(finish, 1)) * 100)
 
   return (
-    <Panel title={t('secTimer')} icon="⏱️">
+    <Panel title={t('secTimer')} icon={<Icons.timer size={16} />}>
       <div className="mb-3 text-center">
         <div className="font-mono text-5xl font-extrabold text-crema">{fmt(elapsed)}</div>
         <div className="mt-1 h-1.5 overflow-hidden rounded-full bg-coffee-950">
-          <div className="h-full bg-coffee-500 transition-all" style={{ width: `${progress}%` }} />
+          <div className="h-full bg-brand-red transition-all" style={{ width: `${progress}%` }} />
         </div>
         {next ? (
           <p className="mt-2 text-xs text-coffee-300">
             {t('nextPour')}: <b className="text-crema">{fmt(next.at)}</b> · {Math.round(next.grams)}g ({L(POUR_STYLES.find((s) => s.id === next.style)!.label)})
           </p>
         ) : (
-          <p className="mt-2 text-xs text-emerald-300">{elapsed >= finish ? t('done') + ' ✓' : ''}</p>
+          <p className="mt-2 text-xs text-brand-tealLight">{elapsed >= finish ? t('done') + ' ✓' : ''}</p>
         )}
       </div>
 
@@ -70,7 +71,7 @@ export function BrewTimer({ store }: { store: BrewStore }) {
             key={i}
             className={`flex items-center justify-between rounded-lg border px-3 py-1.5 text-xs transition ${
               i === activeIdx
-                ? 'border-coffee-400 bg-coffee-500/20 text-crema'
+                ? 'border-brand-red bg-brand-red/15 text-crema'
                 : elapsed >= s.at
                   ? 'border-coffee-800/60 bg-coffee-900/20 text-coffee-400'
                   : 'border-coffee-800/60 bg-coffee-900/30 text-coffee-200'
@@ -83,7 +84,7 @@ export function BrewTimer({ store }: { store: BrewStore }) {
             </span>
           </div>
         ))}
-        <div className="flex items-center justify-between rounded-lg border border-emerald-800/40 bg-emerald-900/10 px-3 py-1.5 text-xs text-emerald-200">
+        <div className="flex items-center justify-between rounded-lg border border-brand-teal/40 bg-brand-teal/10 px-3 py-1.5 text-xs text-brand-tealLight">
           <span className="font-mono font-bold">~{fmt(finish)}</span>
           <span>{t('done')}</span>
           <span>{Math.round(totalWater)}g</span>

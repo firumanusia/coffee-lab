@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Header } from './components/Header'
 import { BottomNav, type TabDef } from './components/BottomNav'
 import { MobileResultBar } from './components/MobileResultBar'
+import { Icons } from './components/icons'
 import { BeansPanel } from './components/panels/BeansPanel'
 import { GearPanel } from './components/panels/GearPanel'
 import { GrindPanel } from './components/panels/GrindPanel'
@@ -15,11 +16,11 @@ import { useMediaQuery } from './hooks/useMediaQuery'
 import { useBrewStore, type BrewStore } from './store/useBrewStore'
 
 const TABS: TabDef[] = [
-  { id: 'beans', icon: '🌱', label: 'navBeans' },
-  { id: 'setup', icon: '⚙️', label: 'navSetup' },
-  { id: 'recipe', icon: '📋', label: 'navRecipe' },
-  { id: 'brew', icon: '📈', label: 'navBrew' },
-  { id: 'log', icon: '📖', label: 'navLog' },
+  { id: 'beans', icon: Icons.beans, label: 'navBeans' },
+  { id: 'setup', icon: Icons.gear, label: 'navSetup' },
+  { id: 'recipe', icon: Icons.recipe, label: 'navRecipe' },
+  { id: 'brew', icon: Icons.results, label: 'navBrew' },
+  { id: 'log', icon: Icons.log, label: 'navLog' },
 ]
 
 function TabContent({ tab, store }: { tab: string; store: BrewStore }) {
@@ -93,8 +94,9 @@ export default function App() {
       )}
 
       <footer className="mt-8 pb-28 text-center text-[11px] text-coffee-500 lg:pb-0">
-        BrewLab · prediksi adalah estimasi heuristik — gunakan TDS terukur untuk hasil akurat ·
-        data: SCA, Honest Coffee Guide, Third Wave Water
+        <span className="font-semibold text-brand-red">MENOOWEL</span>{' '}
+        <span className="text-brand-teal">BrewLab Studio</span> · prediksi adalah estimasi heuristik —
+        gunakan TDS terukur untuk hasil akurat · data: SCA, Honest Coffee Guide, Third Wave Water
       </footer>
 
       {!isDesktop && (

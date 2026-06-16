@@ -2,6 +2,7 @@ import { POUR_STYLES, RECIPES, type PourStep, type PourStyle } from '../../data/
 import { useLocalized, useT } from '../../i18n/LanguageContext'
 import type { BrewStore } from '../../store/useBrewStore'
 import { Panel, Select, Slider } from '../ui'
+import { Icons } from '../icons'
 
 export function RecipePanel({ store }: { store: BrewStore }) {
   const { t } = useT()
@@ -31,7 +32,7 @@ export function RecipePanel({ store }: { store: BrewStore }) {
   let cumulative = 0
 
   return (
-    <Panel title={t('secRecipe')} icon="📋">
+    <Panel title={t('secRecipe')} icon={<Icons.recipe size={16} />}>
       <Select
         label="Recipe"
         value={config.recipeId}

@@ -7,6 +7,7 @@ import { useT } from '../../i18n/LanguageContext'
 import type { BrewStore } from '../../store/useBrewStore'
 import type { BrewFeedback } from '../../store/types'
 import { Panel } from '../ui'
+import { Icons } from '../icons'
 
 const EMPTY: BrewFeedback = { rating: 4, notes: '', body: 3, acidity: 3, sweetness: 3, improvement: '' }
 
@@ -34,7 +35,7 @@ export function BrewLog({ store }: { store: BrewStore }) {
   return (
     <Panel
       title={t('secLog')}
-      icon="📖"
+      icon={<Icons.log size={16} />}
       aside={
         <button className="btn-primary px-3 py-1 text-xs" onClick={() => setOpen((o) => !o)}>
           {t('logBrew')}

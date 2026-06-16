@@ -3,6 +3,7 @@ import { FILTERS } from '../../data/filters'
 import { useLocalized, useT } from '../../i18n/LanguageContext'
 import type { BrewStore } from '../../store/useBrewStore'
 import { Panel, Select } from '../ui'
+import { Icons } from '../icons'
 
 const FLOW_LABEL = (f: number, lang: 'id' | 'en') =>
   f >= 1.1 ? (lang === 'id' ? 'Cepat' : 'Fast') : f <= 0.85 ? (lang === 'id' ? 'Lambat' : 'Slow') : lang === 'id' ? 'Sedang' : 'Medium'
@@ -18,7 +19,7 @@ export function GearPanel({ store }: { store: BrewStore }) {
   const geoLabel = (g: string) => (g === 'conical' ? t('conical') : g === 'flat' ? t('flat') : t('hybrid'))
 
   return (
-    <Panel title={`${t('secDripper')} · ${t('secFilter')}`} icon="🛠️">
+    <Panel title={`${t('secDripper')} · ${t('secFilter')}`} icon={<Icons.gear size={16} />}>
       <Select
         label={t('secDripper')}
         value={config.dripperId}
