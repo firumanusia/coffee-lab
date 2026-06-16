@@ -36,7 +36,13 @@ export class MailService {
       this.logger.log(`[DEV] Verification code for ${to}: ${code}`)
       return
     }
-    await this.transporter.sendMail({ from: this.from(), to, subject, text, html: this.template(code) })
+    // Non-fatal: a send failure (bad address, transient SMTP) must not break
+    // registration — the code is stored and the user can resend.
+    try {
+      await this.transporter.sendMail({ from: this.from(), to, subject, text, html: this.template(code) })
+    } catch (e) {
+      this.logger.error(`Failed to send verification email to ${to}: ${(e as Error).message}`)
+    }
   }
 
   private template(code: string) {

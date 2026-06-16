@@ -237,11 +237,12 @@ def gen_grinders():
             stepless = "stepless" in step_type.lower() and um is None
             note = first_sentences(row[10], 2) if len(row) > 10 else ""
 
-            # Active only when mandatory data is complete; otherwise hidden on the
-            # front end (admin still sees it for manual fixing).
+            # Sheet is fully completed by the owner — ship all grinders active.
+            # (Admin can deactivate individually; auto-rule kept here for reference.)
             range_ok = mn is not None and mx is not None and mx > mn
             step_ok = stepless or um is not None
-            active = bool(brand and model and range_ok and step_ok)
+            _auto_active = bool(brand and model and range_ok and step_ok)  # noqa: F841
+            active = True
 
             gid = slug(brand, model)
             if gid in seen:
