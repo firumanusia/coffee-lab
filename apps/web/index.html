@@ -16,7 +16,7 @@
   <body>
     <script>
       try {
-        if (localStorage.getItem('brewlab.theme') === 'light') document.documentElement.classList.add('light')
+        if (localStorage.getItem('brewlab.theme') !== 'dark') document.documentElement.classList.add('light')
       } catch (e) {}
     </script>
     <div id="root"></div>

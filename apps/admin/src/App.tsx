@@ -18,6 +18,8 @@ import {
 } from 'react-admin'
 import { dataProvider } from './dataProvider'
 import { authProvider } from './authProvider'
+import { lightTheme, darkTheme } from './theme'
+import { LoginPage } from './LoginPage'
 
 const search = [<SearchInput key="q" source="q" alwaysOn />]
 
@@ -190,7 +192,16 @@ const UserEditForm = () => (
 
 export default function App() {
   return (
-    <Admin dataProvider={dataProvider} authProvider={authProvider} title="MENOOWEL Admin" requireAuth>
+    <Admin
+      dataProvider={dataProvider}
+      authProvider={authProvider}
+      loginPage={LoginPage}
+      theme={lightTheme}
+      darkTheme={darkTheme}
+      defaultTheme="light"
+      title="MENOOWEL Admin"
+      requireAuth
+    >
       <Resource name="waters" list={WaterList} edit={() => <Edit><WaterForm /></Edit>} create={() => <Create><WaterForm create /></Create>} />
       <Resource name="beans" list={BeanList} edit={() => <Edit><BeanForm /></Edit>} create={() => <Create><BeanForm create /></Create>} />
       <Resource name="grinders" list={GrinderList} edit={() => <Edit><GrinderForm /></Edit>} create={() => <Create><GrinderForm create /></Create>} />

@@ -14,3 +14,4 @@ build
 !.env.example
 secrets/
 scripts/secrets/
+*.apps.googleusercontent.com.json

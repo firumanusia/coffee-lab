@@ -13,7 +13,7 @@ const LS_KEY = 'brewlab.lang'
 export function LanguageProvider({ children }: { children: ReactNode }) {
   const [lang, setLang] = useState<Lang>(() => {
     const saved = localStorage.getItem(LS_KEY)
-    return saved === 'en' || saved === 'id' ? saved : 'id'
+    return saved === 'en' || saved === 'id' ? saved : 'en'
   })
 
   useEffect(() => {
