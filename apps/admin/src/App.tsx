@@ -80,17 +80,23 @@ const BeanForm = ({ create }: { create?: boolean }) => (
 )
 
 /* ---------------- Grinders ---------------- */
+const grinderFilters = [
+  <SearchInput key="q" source="q" alwaysOn />,
+  <SelectInput key="active" source="active" alwaysOn choices={[{ id: true, name: 'Active' }, { id: false, name: 'Inactive' }]} />,
+]
 const GrinderList = () => (
-  <List filters={search} perPage={25}>
+  <List filters={grinderFilters} perPage={25}>
     <Datagrid rowClick="edit">
       <TextField source="brand" /><TextField source="model" /><NumberField source="minMicron" />
       <NumberField source="maxMicron" /><NumberField source="umPerStep" /><BooleanField source="stepless" />
+      <BooleanField source="active" />
     </Datagrid>
   </List>
 )
 const GrinderForm = ({ create }: { create?: boolean }) => (
   <SimpleForm>
     {create && <IdInput />}
+    <BooleanInput source="active" defaultValue={true} helperText="Off = hidden on the public site" />
     <TextInput source="brand" validate={required()} /><TextInput source="model" validate={required()} />
     <NumberInput source="minMicron" defaultValue={0} /><NumberInput source="maxMicron" defaultValue={1200} />
     <NumberInput source="umPerStep" /><TextInput source="stepType" /><TextInput source="totalSteps" />

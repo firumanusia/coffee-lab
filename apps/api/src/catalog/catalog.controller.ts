@@ -16,8 +16,8 @@ export class CatalogController {
   @Get('beans') beans() { return this.prisma.bean.findMany({ orderBy: [{ origin: 'asc' }, { region: 'asc' }] }) }
   @Get('beans/:id') bean(@Param('id') id: string) { return this.one(this.prisma.bean.findUnique({ where: { id } })) }
 
-  // Grinders
-  @Get('grinders') grinders() { return this.prisma.grinder.findMany({ orderBy: [{ brand: 'asc' }, { model: 'asc' }] }) }
+  // Grinders (public list = active only; admin sees all via /admin/grinders)
+  @Get('grinders') grinders() { return this.prisma.grinder.findMany({ where: { active: true }, orderBy: [{ brand: 'asc' }, { model: 'asc' }] }) }
   @Get('grinders/:id') grinder(@Param('id') id: string) { return this.one(this.prisma.grinder.findUnique({ where: { id } })) }
 
   // Drippers

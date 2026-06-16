@@ -218,25 +218,31 @@ def first_sentences(text, n=2):
     return " ".join(parts[:n]).strip()
 
 def gen_grinders():
+    # Sheet columns (12): 0 hyperlink, 1 Link, 2 Brand, 3 Model, 4 Min, 5 Max,
+    # 6 Grind Range, 7 Total Steps/Clicks, 8 Step Type, 9 Approx µm/step,
+    # 10 Characteristics, 11 Verification.
     items = []
     seen = set()
     with open(os.path.join(RAW, "grinder.csv"), encoding="utf-8") as f:
         r = csv.reader(f)
         next(r)
         for row in r:
-            if len(row) < 13 or not row[2].strip():
+            if len(row) < 11 or not row[2].strip():
                 continue
             brand, model = row[2].strip(), row[3].strip()
             mn = parse_um(row[4]); mx = parse_um(row[5])
             total_steps = row[7].strip()
             step_type = row[8].strip()
             um = parse_um(row[9])
-            if um is None:
-                um = parse_um(row[10])  # est fallback
-            if um is None and mn is not None and mx is not None and "stepless" not in step_type.lower():
-                um = None
-            stepless = "stepless" in step_type.lower() and parse_um(row[9]) is None
-            note = first_sentences(row[11], 2)  # col 11 = Characteristics (col 12 = Verification)
+            stepless = "stepless" in step_type.lower() and um is None
+            note = first_sentences(row[10], 2) if len(row) > 10 else ""
+
+            # Active only when mandatory data is complete; otherwise hidden on the
+            # front end (admin still sees it for manual fixing).
+            range_ok = mn is not None and mx is not None and mx > mn
+            step_ok = stepless or um is not None
+            active = bool(brand and model and range_ok and step_ok)
+
             gid = slug(brand, model)
             if gid in seen:
                 gid = slug(brand, model, str(len(items)))
@@ -244,14 +250,14 @@ def gen_grinders():
             items.append({
                 "id": gid, "brand": brand, "model": model,
                 "minMicron": int(mn) if mn is not None else 0,
-                "maxMicron": int(mx) if mx is not None else 1200,
+                "maxMicron": int(mx) if mx is not None else 0,
                 "umPerStep": um, "stepType": step_type, "totalSteps": total_steps,
-                "stepless": stepless, "note": note,
+                "stepless": stepless, "note": note, "active": active,
             })
     out = header("Grinders: brand+model, micron range, step size/type. Source: honestcoffeeguide via domain spreadsheet.")
     out += ("export interface Grinder { id: string; brand: string; model: string; minMicron: number;\n"
             "  maxMicron: number; umPerStep: number | null; stepType: string; totalSteps: string;\n"
-            "  stepless: boolean; note: string }\n\n")
+            "  stepless: boolean; note: string; active: boolean }\n\n")
     out += "export const GRINDERS: Grinder[] = [\n"
     for g in items:
         out += "  " + js(g) + ",\n"
