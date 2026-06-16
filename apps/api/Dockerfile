@@ -5,7 +5,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends openssl python3
 COPY package.json package-lock.json ./
 COPY apps/api/package.json apps/api/package.json
 COPY packages/shared/package.json packages/shared/package.json
-RUN npm ci --ignore-scripts
+# --include=dev: Coolify injects NODE_ENV=production into the build, which would
+# otherwise make npm omit devDependencies (nest/tsc/prisma) and fail the build.
+RUN npm ci --ignore-scripts --include=dev
 COPY apps/api ./apps/api
 COPY packages/shared ./packages/shared
 RUN npm run -w @menoowel/api prisma:generate && npm run -w @menoowel/api build
