@@ -1,5 +1,5 @@
-import { POUR_STYLES, RECIPES, type PourStep, type PourStyle } from '../../data/recipes'
-import { DRIPPERS } from '../../data/generated/drippers'
+import { POUR_STYLES, type PourStep, type PourStyle } from '../../data/recipes'
+import { useCatalog } from '../../catalog/CatalogContext'
 import { useLocalized, useT } from '../../i18n/LanguageContext'
 import type { BrewStore } from '../../store/useBrewStore'
 import { Panel, Select, Slider } from '../ui'
@@ -9,9 +9,10 @@ export function RecipePanel({ store }: { store: BrewStore }) {
   const { t } = useT()
   const L = useLocalized()
   const { config, update, applyRecipe } = store
+  const { recipes, drippers } = useCatalog()
 
-  const recipe = RECIPES.find((r) => r.id === config.recipeId)
-  const dripper = DRIPPERS.find((d) => d.id === config.dripperId)
+  const recipe = recipes.find((r) => r.id === config.recipeId)
+  const dripper = drippers.find((d) => d.id === config.dripperId)
   const isImmersion = !!dripper?.immersion
   const totalWater = config.dose * config.ratio
   const pourSum = config.pours.reduce((s, p) => s + p.frac, 0)
@@ -39,8 +40,11 @@ export function RecipePanel({ store }: { store: BrewStore }) {
       <Select
         label="Recipe"
         value={config.recipeId}
-        options={RECIPES.map((r) => ({ value: r.id, label: `${r.name} — ${r.author}` }))}
-        onChange={(id) => applyRecipe(id)}
+        options={recipes.map((r) => ({ value: r.id, label: `${r.name} — ${r.author}` }))}
+        onChange={(id) => {
+          const r = recipes.find((x) => x.id === id)
+          if (r) applyRecipe(r)
+        }}
       />
       {recipe && <p className="-mt-1 mb-3 text-[11px] text-coffee-300">{L(recipe.description)}</p>}
 

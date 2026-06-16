@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react'
 import { useT } from '../i18n/LanguageContext'
 import { useTheme } from '../i18n/ThemeContext'
+import { AuthControls } from '../auth/AuthControls'
 import { Icons } from './icons'
 
 export function Header({ compact = false, actions }: { compact?: boolean; actions?: ReactNode }) {
@@ -22,6 +23,7 @@ export function Header({ compact = false, actions }: { compact?: boolean; action
       </div>
       <div className="flex items-center gap-2">
         {actions}
+        <AuthControls />
         <button
           onClick={toggle}
           aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}

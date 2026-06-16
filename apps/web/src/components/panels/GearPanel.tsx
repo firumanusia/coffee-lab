@@ -1,5 +1,4 @@
-import { DRIPPERS } from '../../data/generated/drippers'
-import { FILTERS } from '../../data/generated/filters'
+import { useCatalog } from '../../catalog/CatalogContext'
 import { useT } from '../../i18n/LanguageContext'
 import type { BrewStore } from '../../store/useBrewStore'
 import { Panel, Select } from '../ui'
@@ -8,16 +7,17 @@ import { Icons } from '../icons'
 export function GearPanel({ store }: { store: BrewStore }) {
   const { t } = useT()
   const { config, update } = store
+  const { drippers, filters } = useCatalog()
 
-  const dripper = DRIPPERS.find((d) => d.id === config.dripperId) ?? DRIPPERS[0]
-  const filter = FILTERS.find((f) => f.id === config.filterId) ?? FILTERS[0]
+  const dripper = drippers.find((d) => d.id === config.dripperId) ?? drippers[0]
+  const filter = filters.find((f) => f.id === config.filterId) ?? filters[0]
 
   return (
     <Panel title={`${t('secDripper')} · ${t('secFilter')}`} icon={<Icons.gear size={16} />}>
       <Select
         label={t('secDripper')}
         value={config.dripperId}
-        options={DRIPPERS.map((d) => ({ value: d.id, label: `${d.brand} ${d.model}` }))}
+        options={drippers.map((d) => ({ value: d.id, label: `${d.brand} ${d.model}` }))}
         onChange={(dripperId) => update({ dripperId })}
       />
       <div className="mb-3 rounded-lg border border-coffee-800/60 bg-coffee-900/30 p-2 text-xs text-coffee-200">
@@ -32,7 +32,7 @@ export function GearPanel({ store }: { store: BrewStore }) {
       <Select
         label={t('secFilter')}
         value={config.filterId}
-        options={FILTERS.map((f) => ({ value: f.id, label: `${f.brand} ${f.model}` }))}
+        options={filters.map((f) => ({ value: f.id, label: `${f.brand} ${f.model}` }))}
         onChange={(filterId) => update({ filterId })}
       />
       <div className="rounded-lg border border-coffee-800/60 bg-coffee-900/30 p-2 text-xs text-coffee-200">

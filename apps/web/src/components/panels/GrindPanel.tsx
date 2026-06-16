@@ -1,46 +1,29 @@
-import { useEffect, useState } from 'react'
+import { useCatalog } from '../../catalog/CatalogContext'
+import { suggestSetting } from '../../data/grindLogic'
 import { MICRON_RANGE, grindBandFor } from '../../data/grindChart'
 import { useLocalized, useT } from '../../i18n/LanguageContext'
 import type { BrewStore } from '../../store/useBrewStore'
 import { Panel, Select, Slider } from '../ui'
 import { Icons } from '../icons'
 
-// The grinder catalog (227 entries with notes) is the heaviest data module, so
-// it is code-split and loaded on demand to keep the initial bundle light.
-type GrinderModule = typeof import('../../data/generated/grinders')
-
 export function GrindPanel({ store }: { store: BrewStore }) {
   const { t } = useT()
   const L = useLocalized()
   const { config, update } = store
-  const [mod, setMod] = useState<GrinderModule | null>(null)
+  const { grinders } = useCatalog()
 
-  useEffect(() => {
-    let alive = true
-    import('../../data/generated/grinders').then((m) => alive && setMod(m))
-    return () => {
-      alive = false
-    }
-  }, [])
-
-  if (!mod) {
+  if (!grinders.length) {
     return (
       <Panel title={t('secGrind')} icon={<Icons.grind size={16} />}>
         <div className="animate-pulse space-y-2">
           <div className="h-9 rounded-lg bg-coffee-900/50" />
           <div className="h-6 rounded-lg bg-coffee-900/40" />
-          <div className="grid grid-cols-3 gap-2">
-            <div className="h-14 rounded-xl bg-coffee-900/40" />
-            <div className="h-14 rounded-xl bg-coffee-900/40" />
-            <div className="h-14 rounded-xl bg-coffee-900/40" />
-          </div>
         </div>
       </Panel>
     )
   }
 
-  const { GRINDERS, suggestSetting } = mod
-  const grinder = GRINDERS.find((g) => g.id === config.grinderId) ?? GRINDERS[0]
+  const grinder = grinders.find((g) => g.id === config.grinderId) ?? grinders[0]
   const band = grindBandFor(config.micron)
   const setting = suggestSetting(grinder, config.micron)
 
@@ -52,7 +35,7 @@ export function GrindPanel({ store }: { store: BrewStore }) {
       <Select
         label={t('grinderModel')}
         value={config.grinderId}
-        options={GRINDERS.map((g) => ({ value: g.id, label: `${g.brand} ${g.model}` }))}
+        options={grinders.map((g) => ({ value: g.id, label: `${g.brand} ${g.model}` }))}
         onChange={(grinderId) => update({ grinderId })}
       />
       <Slider

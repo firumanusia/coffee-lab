@@ -1,8 +1,13 @@
-import { DRIPPERS } from '../data/generated/drippers'
-import { FILTERS } from '../data/generated/filters'
 import { processInfo } from '../data/processInfo'
 import { roastFromAgtron } from '../data/roast'
+import type { Dripper } from '../data/generated/drippers'
+import type { PaperFilter } from '../data/generated/filters'
 import type { BrewConfig } from '../store/types'
+
+export interface Gear {
+  dripper?: Pick<Dripper, 'flowFactor'>
+  filter?: Pick<PaperFilter, 'flowFactor'>
+}
 
 export interface Prediction {
   totalWater: number
@@ -22,9 +27,7 @@ const ABSORPTION = 2.0 // g water retained per g coffee
  * the chosen variables push extraction up/down so the result can be plotted on
  * the SCA chart. Measured TDS (refractometer) overrides the estimate.
  */
-export function predict(c: BrewConfig): Prediction {
-  const dripper = DRIPPERS.find((d) => d.id === c.dripperId) ?? DRIPPERS[0]
-  const filter = FILTERS.find((f) => f.id === c.filterId) ?? FILTERS[0]
+export function predict(c: BrewConfig, gear: Gear = {}): Prediction {
   const process = processInfo(c.processId)
   const roast = roastFromAgtron(c.agtron)
 
@@ -33,7 +36,7 @@ export function predict(c: BrewConfig): Prediction {
 
   // Flow & contact time. ~5 g/s is a realistic average drawdown rate for a
   // medium V60 grind; geometry/filter and grind scale it from there.
-  const combinedFlow = dripper.flowFactor * filter.flowFactor
+  const combinedFlow = (gear.dripper?.flowFactor ?? 1.0) * (gear.filter?.flowFactor ?? 1.0)
   const flowRate = round1(clamp(5 * combinedFlow * (c.micron / 650), 1.5, 14)) // g/s
   const lastPourAt = c.pours.length ? Math.max(...c.pours.map((p) => p.at)) : 0
   const drawdown = Math.max(25, totalWater / flowRate)

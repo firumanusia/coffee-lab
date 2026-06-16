@@ -165,4 +165,20 @@ export const STR: Dict = {
   navRecipe: { id: 'Resep', en: 'Recipe' },
   navBrew: { id: 'Seduh', en: 'Brew' },
   navLog: { id: 'Riwayat', en: 'Log' },
+
+  // auth
+  signIn: { id: 'Masuk', en: 'Sign in' },
+  signUp: { id: 'Daftar', en: 'Sign up' },
+  signOut: { id: 'Keluar', en: 'Sign out' },
+  emailLabel: { id: 'Email', en: 'Email' },
+  passwordLabel: { id: 'Kata sandi', en: 'Password' },
+  nameLabel: { id: 'Nama', en: 'Name' },
+  googleContinue: { id: 'Lanjut dengan Google', en: 'Continue with Google' },
+  needAccount: { id: 'Belum punya akun? Daftar', en: 'No account? Sign up' },
+  haveAccount: { id: 'Sudah punya akun? Masuk', en: 'Have an account? Sign in' },
+  authFailed: { id: 'Gagal. Periksa email/kata sandi.', en: 'Failed. Check email/password.' },
+  syncNote: {
+    id: 'Masuk untuk menyimpan preset & riwayat di cloud (sinkron ke semua perangkat).',
+    en: 'Sign in to save presets & history in the cloud (synced across devices).',
+  },
 }

@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import { BEANS } from '../../data/generated/beans'
+import { useCatalog } from '../../catalog/CatalogContext'
 import { processInfo } from '../../data/processInfo'
 import { ROAST_BANDS, roastFromAgtron } from '../../data/roast'
 import { useLocalized, useT } from '../../i18n/LanguageContext'
@@ -13,31 +13,35 @@ export function BeansPanel({ store }: { store: BrewStore }) {
   const { t, lang } = useT()
   const L = useLocalized()
   const { config, update } = store
+  const { beans } = useCatalog()
 
-  const bean = BEANS.find((b) => b.id === config.beanId) ?? BEANS[0]
+  const bean = beans.find((b) => b.id === config.beanId) ?? beans[0]
   const roast = roastFromAgtron(config.agtron)
   const proc = processInfo(config.processId)
 
-  const origins = useMemo(() => uniq(BEANS.map((b) => b.origin)), [])
-  const regions = useMemo(() => uniq(BEANS.filter((b) => b.origin === bean.origin).map((b) => b.region)), [bean.origin])
+  const origins = useMemo(() => uniq(beans.map((b) => b.origin)), [beans])
+  const regions = useMemo(
+    () => uniq(beans.filter((b) => b.origin === bean.origin).map((b) => b.region)),
+    [beans, bean.origin],
+  )
   const varieties = useMemo(
-    () => BEANS.filter((b) => b.origin === bean.origin && b.region === bean.region),
-    [bean.origin, bean.region],
+    () => beans.filter((b) => b.origin === bean.origin && b.region === bean.region),
+    [beans, bean.origin, bean.region],
   )
 
-  const selectBean = (b: (typeof BEANS)[number]) =>
+  const selectBean = (b: (typeof beans)[number]) =>
     update({ beanId: b.id, processId: b.processes[0] ?? 'Washed', agtron: b.agtron })
 
   const onOrigin = (origin: string) => {
-    const b = BEANS.find((x) => x.origin === origin)
+    const b = beans.find((x) => x.origin === origin)
     if (b) selectBean(b)
   }
   const onRegion = (region: string) => {
-    const b = BEANS.find((x) => x.origin === bean.origin && x.region === region)
+    const b = beans.find((x) => x.origin === bean.origin && x.region === region)
     if (b) selectBean(b)
   }
   const onVariety = (id: string) => {
-    const b = BEANS.find((x) => x.id === id)
+    const b = beans.find((x) => x.id === id)
     if (b) selectBean(b)
   }
 

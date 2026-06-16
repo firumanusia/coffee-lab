@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { RECIPES } from '../../data/recipes'
+import { useCatalog } from '../../catalog/CatalogContext'
 import { useT } from '../../i18n/LanguageContext'
 import type { BrewStore } from '../../store/useBrewStore'
 import { Panel } from '../ui'
@@ -8,6 +8,7 @@ import { Icons } from '../icons'
 export function PresetBar({ store }: { store: BrewStore }) {
   const { t } = useT()
   const { presets, savePreset, loadPreset, deletePreset, applyRecipe } = store
+  const { recipes } = useCatalog()
   const [name, setName] = useState('')
 
   const save = () => {
@@ -34,8 +35,8 @@ export function PresetBar({ store }: { store: BrewStore }) {
 
       <div className="field-label">{t('championPresets')}</div>
       <div className="mb-3 flex flex-wrap gap-1.5">
-        {RECIPES.filter((r) => r.fixed).map((r) => (
-          <button key={r.id} className="chip" onClick={() => applyRecipe(r.id)} title={r.author}>
+        {recipes.filter((r) => r.fixed).map((r) => (
+          <button key={r.id} className="chip" onClick={() => applyRecipe(r)} title={r.author}>
             {r.name} · {r.author}
           </button>
         ))}

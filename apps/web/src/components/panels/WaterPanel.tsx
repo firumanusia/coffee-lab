@@ -1,5 +1,5 @@
 import { TEMP_RANGE, WATER_SCA, suggestTemp } from '../../data/water'
-import { WATERS } from '../../data/generated/waters'
+import { useCatalog } from '../../catalog/CatalogContext'
 import { roastFromAgtron } from '../../data/roast'
 import { useLocalized, useT } from '../../i18n/LanguageContext'
 import type { BrewStore } from '../../store/useBrewStore'
@@ -10,9 +10,10 @@ export function WaterPanel({ store }: { store: BrewStore }) {
   const { t } = useT()
   const L = useLocalized()
   const { config, update } = store
+  const { waters } = useCatalog()
   const suggested = suggestTemp(config.agtron)
   const roast = roastFromAgtron(config.agtron)
-  const water = WATERS.find((w) => w.id === config.waterId) ?? WATERS[0]
+  const water = waters.find((w) => w.id === config.waterId) ?? waters[0]
 
   const inSca = water.ppm >= WATER_SCA.tds.min && water.ppm <= WATER_SCA.tds.max
   const ppmVerdict =
@@ -27,7 +28,7 @@ export function WaterPanel({ store }: { store: BrewStore }) {
       <Select
         label={t('waterBrand')}
         value={config.waterId}
-        options={WATERS.map((w) => ({ value: w.id, label: `${w.name} — ${w.ppm} ppm / ${w.phLabel} pH` }))}
+        options={waters.map((w) => ({ value: w.id, label: `${w.name} — ${w.ppm} ppm / ${w.phLabel} pH` }))}
         onChange={(waterId) => update({ waterId })}
       />
       <div className="mb-3 grid grid-cols-2 gap-2 text-center">

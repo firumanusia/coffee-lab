@@ -1,5 +1,6 @@
 import { predict } from '../model/predict'
 import { extractionOf, strengthOf } from '../model/sca'
+import { useGear } from '../catalog/CatalogContext'
 import { useT } from '../i18n/LanguageContext'
 import type { BrewStore } from '../store/useBrewStore'
 
@@ -7,7 +8,7 @@ const zoneColor = (ok: boolean) => (ok ? 'text-brand-tealLight' : 'text-amber-30
 
 export function MobileResultBar({ store, onOpen, active }: { store: BrewStore; onOpen: () => void; active: boolean }) {
   const { t } = useT()
-  const p = predict(store.config)
+  const p = predict(store.config, useGear(store.config))
   const eyOk = extractionOf(p.ey) === 'ideal'
   const tdsOk = strengthOf(p.tds) === 'ideal'
 

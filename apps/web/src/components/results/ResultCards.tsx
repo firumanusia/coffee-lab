@@ -1,4 +1,5 @@
 import { predict } from '../../model/predict'
+import { useGear } from '../../catalog/CatalogContext'
 import { useLocalized, useT } from '../../i18n/LanguageContext'
 import type { BrewStore } from '../../store/useBrewStore'
 import { Panel } from '../ui'
@@ -9,7 +10,7 @@ export function ResultCards({ store }: { store: BrewStore }) {
   const { t } = useT()
   const L = useLocalized()
   const { config, update } = store
-  const p = predict(config)
+  const p = predict(config, useGear(config))
 
   return (
     <Panel title={t('secResults')} icon={<Icons.results size={16} />}>

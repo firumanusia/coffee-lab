@@ -1,6 +1,5 @@
 import { useState } from 'react'
-import { BEANS } from '../../data/generated/beans'
-import { RECIPES } from '../../data/recipes'
+import { useCatalog, useGear } from '../../catalog/CatalogContext'
 import { predict } from '../../model/predict'
 import { extractionOf, strengthOf } from '../../model/sca'
 import { useT } from '../../i18n/LanguageContext'
@@ -14,11 +13,18 @@ const EMPTY: BrewFeedback = { rating: 4, notes: '', body: 3, acidity: 3, sweetne
 export function BrewLog({ store }: { store: BrewStore }) {
   const { t, lang } = useT()
   const { config, addLog, log, deleteLog, setConfig } = store
+  const { beans, recipes } = useCatalog()
   const [open, setOpen] = useState(false)
   const [fb, setFb] = useState<BrewFeedback>(EMPTY)
   const [name, setName] = useState('')
 
-  const p = predict(config)
+  const beanLabel = (id: string) => {
+    const b = beans.find((x) => x.id === id)
+    return b ? `${b.origin} ${b.region} ${b.variety}` : id
+  }
+  const defaultName = (recipeId: string) => recipes.find((r) => r.id === recipeId)?.name ?? 'Brew'
+
+  const p = predict(config, useGear(config))
   const autoSuggest = buildSuggestions(p.ey, p.tds, lang)
 
   const submit = () => {
@@ -153,13 +159,6 @@ function buildSuggestions(ey: number, tds: number, lang: 'id' | 'en'): string {
   return parts.join(', ')
 }
 
-const beanLabel = (id: string) => {
-  const b = BEANS.find((x) => x.id === id)
-  return b ? `${b.origin} ${b.region} ${b.variety}` : id
-}
-const defaultName = (recipeId: string) => RECIPES.find((r) => r.id === recipeId)?.name ?? 'Brew'
-
-function fmtDate(ts: number): string {
-  const d = new Date(ts)
-  return d.toLocaleString()
+function fmtDate(ts: number | string): string {
+  return new Date(ts).toLocaleString()
 }

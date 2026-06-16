@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { POUR_STYLES } from '../../data/recipes'
 import { predict } from '../../model/predict'
+import { useGear } from '../../catalog/CatalogContext'
 import { useLocalized, useT } from '../../i18n/LanguageContext'
 import type { BrewStore } from '../../store/useBrewStore'
 import { Panel } from '../ui'
@@ -15,7 +16,7 @@ export function BrewTimer({ store }: { store: BrewStore }) {
   const ref = useRef<number | null>(null)
 
   const totalWater = config.dose * config.ratio
-  const finish = predict(config).brewTimeSec
+  const finish = predict(config, useGear(config)).brewTimeSec
   let cum = 0
   const steps = config.pours.map((p) => {
     cum += p.frac * totalWater
