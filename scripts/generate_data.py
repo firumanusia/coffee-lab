@@ -7,8 +7,12 @@ Outputs to src/data/generated/*.ts
 import csv, re, os, json
 
 RAW = os.path.join(os.path.dirname(__file__), "raw")
-OUT = os.path.join(os.path.dirname(__file__), "..", "src", "data", "generated")
+ROOT = os.path.join(os.path.dirname(__file__), "..")
+OUT = os.path.join(ROOT, "apps", "web", "src", "data", "generated")
+# JSON mirror for the API seed (DB is source of truth in prod; this seeds it).
+JSON_OUT = os.path.join(ROOT, "packages", "shared", "catalog")
 os.makedirs(OUT, exist_ok=True)
+os.makedirs(JSON_OUT, exist_ok=True)
 
 def slug(*parts):
     s = "-".join(p for p in parts if p)
@@ -56,6 +60,7 @@ def gen_water():
         body += f"  {{ id: {js(w['id'])}, name: {js(w['name'])}, ph: {w['ph']}, phLabel: {js(w['phLabel'])}, ppm: {w['ppm']} }},\n"
     body += "]\n"
     write("waters.ts", body)
+    write_json("waters.json", waters)
     return len(waters)
 
 # ---------------- BEANS (origin/region/variety/process) ----------------
@@ -99,6 +104,7 @@ def gen_beans():
         out += "  " + js(b) + ",\n"
     out += "]\n"
     write("beans.ts", out)
+    write_json("beans.json", beans)
     return len(beans)
 
 # ---------------- DRIPPERS ----------------
@@ -162,6 +168,7 @@ def gen_drippers():
         out += "  " + js(d) + ",\n"
     out += "]\n"
     write("drippers.ts", out)
+    write_json("drippers.json", items)
     return len(items)
 
 # ---------------- FILTERS ----------------
@@ -196,6 +203,7 @@ def gen_filters():
         out += "  " + js(x) + ",\n"
     out += "]\n"
     write("filters.ts", out)
+    write_json("filters.json", items)
     return len(items)
 
 # ---------------- GRINDERS ----------------
@@ -255,11 +263,16 @@ def gen_grinders():
             "  return Math.max(0, Math.round((clamped - g.minMicron) / g.umPerStep))\n"
             "}\n")
     write("grinders.ts", out)
+    write_json("grinders.json", items)
     return len(items)
 
 def write(name, body):
     with open(os.path.join(OUT, name), "w", encoding="utf-8", newline="\n") as f:
         f.write(body)
+
+def write_json(name, data):
+    with open(os.path.join(JSON_OUT, name), "w", encoding="utf-8", newline="\n") as f:
+        json.dump(data, f, ensure_ascii=False, indent=2)
 
 if __name__ == "__main__":
     print("waters:", gen_water())

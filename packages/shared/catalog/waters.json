@@ -1,0 +1,149 @@
+[
+  {
+    "id": "evian",
+    "name": "Evian",
+    "ph": 7.2,
+    "phLabel": "7.2",
+    "ppm": 345
+  },
+  {
+    "id": "prima",
+    "name": "Prima",
+    "ph": 7.9,
+    "phLabel": "7.9",
+    "ppm": 67
+  },
+  {
+    "id": "oasis",
+    "name": "Oasis",
+    "ph": 7.8,
+    "phLabel": "7.8",
+    "ppm": 64
+  },
+  {
+    "id": "aqua",
+    "name": "Aqua",
+    "ph": 7.7,
+    "phLabel": "7.7",
+    "ppm": 112
+  },
+  {
+    "id": "vit",
+    "name": "Vit",
+    "ph": 7.9,
+    "phLabel": "7.9",
+    "ppm": 120
+  },
+  {
+    "id": "le-minerale",
+    "name": "Le Minerale",
+    "ph": 8.0,
+    "phLabel": "8.0",
+    "ppm": 299
+  },
+  {
+    "id": "2tang",
+    "name": "2tang",
+    "ph": 8.0,
+    "phLabel": "8.0",
+    "ppm": 68
+  },
+  {
+    "id": "amidis",
+    "name": "Amidis",
+    "ph": 7.0,
+    "phLabel": "6–8",
+    "ppm": 0
+  },
+  {
+    "id": "nestle-pure-life",
+    "name": "Nestle Pure Life",
+    "ph": 7.4,
+    "phLabel": "7.4",
+    "ppm": 66
+  },
+  {
+    "id": "ron-88",
+    "name": "Ron 88",
+    "ph": 7.7,
+    "phLabel": "7.7",
+    "ppm": 74
+  },
+  {
+    "id": "perfect",
+    "name": "Perfect",
+    "ph": 9.5,
+    "phLabel": "9.5",
+    "ppm": 29
+  },
+  {
+    "id": "club",
+    "name": "Club",
+    "ph": 8.0,
+    "phLabel": "8.0",
+    "ppm": 52
+  },
+  {
+    "id": "ades",
+    "name": "Ades",
+    "ph": 7.5,
+    "phLabel": "7.5",
+    "ppm": 58
+  },
+  {
+    "id": "frozen",
+    "name": "Frozen",
+    "ph": 7.5,
+    "phLabel": "7.5",
+    "ppm": 87
+  },
+  {
+    "id": "cleo",
+    "name": "Cleo",
+    "ph": 7.3,
+    "phLabel": "7.3",
+    "ppm": 10
+  },
+  {
+    "id": "total-8",
+    "name": "Total 8+",
+    "ph": 8.1,
+    "phLabel": "8.1",
+    "ppm": 102
+  },
+  {
+    "id": "crystalline",
+    "name": "Crystalline",
+    "ph": 7.5,
+    "phLabel": "7.5",
+    "ppm": 95
+  },
+  {
+    "id": "air-alfamart",
+    "name": "Air Alfamart",
+    "ph": 7.4,
+    "phLabel": "7.4",
+    "ppm": 1
+  },
+  {
+    "id": "air-indomaret",
+    "name": "Air Indomaret",
+    "ph": 6.9,
+    "phLabel": "6.9",
+    "ppm": 31
+  },
+  {
+    "id": "rivero",
+    "name": "Rivero",
+    "ph": 7.5,
+    "phLabel": "7.5",
+    "ppm": 0
+  },
+  {
+    "id": "e",
+    "name": "E+",
+    "ph": 7.7,
+    "phLabel": "7.7",
+    "ppm": 0
+  }
+]

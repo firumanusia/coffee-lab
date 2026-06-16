@@ -1,7 +1,16 @@
 node_modules
 dist
 dist-ssr
+build
 *.local
+*.tsbuildinfo
 .vercel
 .DS_Store
 *.log
+
+# env & secrets — never commit
+.env
+.env.*
+!.env.example
+secrets/
+scripts/secrets/
