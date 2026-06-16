@@ -1,0 +1,11 @@
+**/node_modules
+**/dist
+**/build
+**/.env
+**/.env.*
+!**/.env.example
+.git
+legacy
+scripts/secrets
+**/*.log
+**/.vite
