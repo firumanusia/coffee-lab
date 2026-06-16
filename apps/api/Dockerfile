@@ -5,7 +5,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends openssl python3
 COPY package.json package-lock.json ./
 COPY apps/api/package.json apps/api/package.json
 COPY packages/shared/package.json packages/shared/package.json
-RUN npm ci
+RUN npm ci --ignore-scripts
 COPY apps/api ./apps/api
 COPY packages/shared ./packages/shared
 RUN npm run -w @menoowel/api prisma:generate && npm run -w @menoowel/api build
@@ -21,4 +21,4 @@ COPY --from=build /app/packages/shared ./packages/shared
 WORKDIR /app/apps/api
 EXPOSE 3000
 # Apply migrations on boot (idempotent), then start. Seeding is done separately.
-CMD sh -c "npx prisma migrate deploy && node dist/main.js"
+CMD ["sh","-c","npx prisma migrate deploy && node dist/main.js"]
