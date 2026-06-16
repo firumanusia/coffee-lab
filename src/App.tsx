@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, type ReactNode } from 'react'
 import { Header } from './components/Header'
 import { BottomNav, type TabDef } from './components/BottomNav'
 import { MobileResultBar } from './components/MobileResultBar'
@@ -56,55 +56,62 @@ function TabContent({ tab, store }: { tab: string; store: BrewStore }) {
   }
 }
 
+/** A dashboard column that scrolls internally so the page itself never scrolls. */
+function Col({ children }: { children: ReactNode }) {
+  return <div className="flex min-h-0 flex-col gap-3 overflow-y-auto pr-1">{children}</div>
+}
+
+function DesktopDashboard({ store }: { store: BrewStore }) {
+  return (
+    <div className="flex h-screen flex-col overflow-hidden px-4 py-3">
+      <Header compact />
+      <main className="grid min-h-0 flex-1 grid-cols-2 grid-rows-2 gap-3 xl:grid-cols-4 xl:grid-rows-1">
+        <Col>
+          <BeansPanel store={store} />
+          <WaterPanel store={store} />
+        </Col>
+        <Col>
+          <GrindPanel store={store} />
+          <GearPanel store={store} />
+          <PresetBar store={store} />
+        </Col>
+        <Col>
+          <RecipePanel store={store} />
+          <BrewTimer store={store} />
+        </Col>
+        <Col>
+          <ResultCards store={store} />
+          <BrewLog store={store} />
+        </Col>
+      </main>
+    </div>
+  )
+}
+
 export default function App() {
   const store = useBrewStore()
   const isDesktop = useMediaQuery('(min-width: 1024px)')
   const [tab, setTab] = useState('beans')
 
+  if (isDesktop) return <DesktopDashboard store={store} />
+
   return (
     <div className="mx-auto max-w-6xl px-4 py-6">
       <Header />
+      <div className="pb-32">
+        <TabContent tab={tab} store={store} />
+      </div>
 
-      {isDesktop ? (
-        <>
-          <div className="grid grid-cols-1 gap-4 lg:grid-cols-[1.2fr_1fr]">
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-              <BeansPanel store={store} />
-              <WaterPanel store={store} />
-              <GrindPanel store={store} />
-              <GearPanel store={store} />
-              <div className="sm:col-span-2">
-                <RecipePanel store={store} />
-              </div>
-            </div>
-            <div className="grid grid-cols-1 gap-4">
-              <ResultCards store={store} />
-              <BrewTimer store={store} />
-              <PresetBar store={store} />
-            </div>
-          </div>
-          <div className="mt-4">
-            <BrewLog store={store} />
-          </div>
-        </>
-      ) : (
-        <div className="pb-32">
-          <TabContent tab={tab} store={store} />
-        </div>
-      )}
-
-      <footer className="mt-8 pb-28 text-center text-[11px] text-coffee-500 lg:pb-0">
+      <footer className="mt-8 pb-28 text-center text-[11px] text-coffee-500">
         <span className="font-semibold text-brand-red">MENOOWEL</span>{' '}
         <span className="text-brand-teal">BrewLab Studio</span> · prediksi adalah estimasi heuristik —
         gunakan TDS terukur untuk hasil akurat · data: SCA, Honest Coffee Guide, Third Wave Water
       </footer>
 
-      {!isDesktop && (
-        <div className="fixed inset-x-0 bottom-0 z-40 mx-auto max-w-6xl">
-          <MobileResultBar store={store} active={tab === 'brew'} onOpen={() => setTab('brew')} />
-          <BottomNav tabs={TABS} active={tab} onSelect={setTab} />
-        </div>
-      )}
+      <div className="fixed inset-x-0 bottom-0 z-40 mx-auto max-w-6xl">
+        <MobileResultBar store={store} active={tab === 'brew'} onOpen={() => setTab('brew')} />
+        <BottomNav tabs={TABS} active={tab} onSelect={setTab} />
+      </div>
     </div>
   )
 }
