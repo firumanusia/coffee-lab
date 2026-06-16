@@ -1,0 +1,165 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+model User {
+  id            String         @id @default(cuid())
+  email         String         @unique
+  passwordHash  String?
+  googleId      String?        @unique
+  name          String?
+  role          Role           @default(USER)
+  presets       Preset[]
+  brewLogs      BrewLog[]
+  refreshTokens RefreshToken[]
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+}
+
+model RefreshToken {
+  id        String   @id @default(cuid())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+  tokenHash String
+  expiresAt DateTime
+  revoked   Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+}
+
+// ---------- Catalogs (admin-managed) ----------
+
+model Water {
+  id        String   @id
+  name      String
+  ph        Float
+  phLabel   String
+  ppm       Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Bean {
+  id         String   @id
+  origin     String
+  region     String
+  variety    String
+  species    String
+  elevation  String
+  processes  String[]
+  body       String
+  acidity    String
+  sweetness  String
+  aroma      String
+  notes      String
+  roastIdeal String
+  agtron     Int
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model Dripper {
+  id         String   @id
+  brand      String
+  model      String
+  typeRaw    String
+  geometry   String
+  flowFactor Float
+  immersion  Boolean
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model PaperFilter {
+  id         String   @id
+  brand      String
+  model      String
+  material   String
+  flowRate   String
+  flowFactor Float
+  body       String
+  clarity    String
+  sweetness  String
+  acidity    String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model Grinder {
+  id         String   @id
+  brand      String
+  model      String
+  minMicron  Int
+  maxMicron  Int
+  umPerStep  Float?
+  stepType   String
+  totalSteps String
+  stepless   Boolean
+  note       String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model Recipe {
+  id          String   @id
+  name        String
+  author      String
+  dose        Float
+  ratio       Float
+  tempC       Int
+  agtron      Int
+  fixed       Boolean
+  pours       Json
+  description Json
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Process {
+  id         String   @id
+  nameId     String
+  nameEn     String
+  extraction Float
+  flavorId   String
+  flavorEn   String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+// ---------- User data ----------
+
+model Preset {
+  id        String   @id @default(cuid())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+  name      String
+  config    Json
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+}
+
+model BrewLog {
+  id        String   @id @default(cuid())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+  name      String
+  config    Json
+  result    Json
+  feedback  Json
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+}

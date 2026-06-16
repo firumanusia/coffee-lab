@@ -1,0 +1,50 @@
+[
+  {
+    "id": "anaerobic",
+    "nameId": "Anaerobic",
+    "nameEn": "Anaerobic",
+    "extraction": 1.08,
+    "flavorId": "Intens, boozy, aromatik.",
+    "flavorEn": "Intense, boozy, aromatic."
+  },
+  {
+    "id": "honey",
+    "nameId": "Honey",
+    "nameEn": "Honey",
+    "extraction": 1.02,
+    "flavorId": "Manis seimbang, body sedang.",
+    "flavorEn": "Balanced sweetness, medium body."
+  },
+  {
+    "id": "natural",
+    "nameId": "Natural",
+    "nameEn": "Natural",
+    "extraction": 1.04,
+    "flavorId": "Buah matang, body tebal, manis fermentatif.",
+    "flavorEn": "Ripe fruit, heavy body, fermented sweetness."
+  },
+  {
+    "id": "pulped-natural",
+    "nameId": "Pulped Natural",
+    "nameEn": "Pulped Natural",
+    "extraction": 1.02,
+    "flavorId": "Manis, body sedang–tebal.",
+    "flavorEn": "Sweet, medium–full body."
+  },
+  {
+    "id": "washed",
+    "nameId": "Washed",
+    "nameEn": "Washed",
+    "extraction": 1,
+    "flavorId": "Bersih, clarity tinggi, asiditas cerah.",
+    "flavorEn": "Clean, high clarity, bright acidity."
+  },
+  {
+    "id": "wet-hulled",
+    "nameId": "Wet Hulled",
+    "nameEn": "Wet Hulled",
+    "extraction": 1.05,
+    "flavorId": "Earthy, herbal, body sangat tebal.",
+    "flavorEn": "Earthy, herbal, very full body."
+  }
+]
