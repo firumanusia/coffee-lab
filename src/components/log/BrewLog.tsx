@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { ORIGINS } from '../../data/origins'
+import { BEANS } from '../../data/generated/beans'
 import { RECIPES } from '../../data/recipes'
 import { predict } from '../../model/predict'
 import { extractionOf, strengthOf } from '../../model/sca'
@@ -101,7 +101,7 @@ export function BrewLog({ store }: { store: BrewStore }) {
                 </span>
               </div>
               <div className="mt-1 text-xs text-coffee-200">
-                {originName(e.config.originId)} · {e.config.dose}g 1:{e.config.ratio} · {e.config.tempC}°C · {Math.round(e.config.micron)}µm
+                {beanLabel(e.config.beanId)} · {e.config.dose}g 1:{e.config.ratio} · {e.config.tempC}°C · {Math.round(e.config.micron)}µm
               </div>
               <div className="mt-1 flex flex-wrap gap-x-3 text-[11px] text-coffee-300">
                 <span>TDS {e.result.tds}%</span>
@@ -153,7 +153,10 @@ function buildSuggestions(ey: number, tds: number, lang: 'id' | 'en'): string {
   return parts.join(', ')
 }
 
-const originName = (id: string) => ORIGINS.find((o) => o.id === id)?.name ?? id
+const beanLabel = (id: string) => {
+  const b = BEANS.find((x) => x.id === id)
+  return b ? `${b.origin} ${b.region} ${b.variety}` : id
+}
 const defaultName = (recipeId: string) => RECIPES.find((r) => r.id === recipeId)?.name ?? 'Brew'
 
 function fmtDate(ts: number): string {

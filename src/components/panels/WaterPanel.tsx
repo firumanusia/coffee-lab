@@ -1,8 +1,9 @@
 import { TEMP_RANGE, WATER_SCA, suggestTemp } from '../../data/water'
+import { WATERS } from '../../data/generated/waters'
 import { roastFromAgtron } from '../../data/roast'
 import { useLocalized, useT } from '../../i18n/LanguageContext'
 import type { BrewStore } from '../../store/useBrewStore'
-import { Panel, Slider } from '../ui'
+import { Panel, Select, Slider } from '../ui'
 import { Icons } from '../icons'
 
 export function WaterPanel({ store }: { store: BrewStore }) {
@@ -11,9 +12,36 @@ export function WaterPanel({ store }: { store: BrewStore }) {
   const { config, update } = store
   const suggested = suggestTemp(config.agtron)
   const roast = roastFromAgtron(config.agtron)
+  const water = WATERS.find((w) => w.id === config.waterId) ?? WATERS[0]
+
+  const inSca = water.ppm >= WATER_SCA.tds.min && water.ppm <= WATER_SCA.tds.max
+  const ppmVerdict =
+    water.ppm < WATER_SCA.tds.min
+      ? { id: 'TDS rendah — bisa over-extract / tipis. Pertimbangkan air bermineral.', en: 'Low TDS — can over-extract / taste thin. Consider mineralized water.' }
+      : water.ppm > WATER_SCA.tds.max
+        ? { id: 'TDS tinggi — bisa menumpulkan rasa & memicu scaling.', en: 'High TDS — can mute flavors & cause scaling.' }
+        : { id: 'Masuk rentang SCA (75–250 ppm). 👌', en: 'Within SCA range (75–250 ppm). 👌' }
 
   return (
     <Panel title={t('secWater')} icon={<Icons.water size={16} />}>
+      <Select
+        label={t('waterBrand')}
+        value={config.waterId}
+        options={WATERS.map((w) => ({ value: w.id, label: `${w.name} — ${w.ppm} ppm / ${w.phLabel} pH` }))}
+        onChange={(waterId) => update({ waterId })}
+      />
+      <div className="mb-3 grid grid-cols-2 gap-2 text-center">
+        <div className="metric">
+          <div className={`metric-value text-xl ${inSca ? 'text-brand-tealLight' : 'text-amber-300'}`}>{water.ppm}</div>
+          <div className="metric-label">TDS (ppm)</div>
+        </div>
+        <div className="metric">
+          <div className="metric-value text-xl">{water.phLabel}</div>
+          <div className="metric-label">pH</div>
+        </div>
+      </div>
+      <p className={`mb-3 text-[11px] ${inSca ? 'text-coffee-300' : 'text-amber-300'}`}>{L(ppmVerdict)}</p>
+
       <Slider
         label={t('waterTemp')}
         value={config.tempC}

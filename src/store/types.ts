@@ -3,13 +3,13 @@ import type { PourStep } from '../data/recipes'
 export interface BrewConfig {
   // water
   tempC: number
+  waterId: string
   // grind
   grinderId: string
   micron: number
-  // beans
-  originId: string
-  variety: string
-  processId: string
+  // beans (cascading origin/region/variety from the bean DB)
+  beanId: string
+  processId: string // chosen process name for the selected bean
   agtron: number
   // gear
   dripperId: string
@@ -20,6 +20,9 @@ export interface BrewConfig {
   ratio: number
   pours: PourStep[]
   fixedPours: boolean
+  // immersion / switch dripper timings (seconds from start); undefined if N/A
+  switchCloseAt?: number
+  switchOpenAt?: number
   // measured override
   useMeasured: boolean
   measuredTds?: number

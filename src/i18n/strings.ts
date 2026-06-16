@@ -23,6 +23,7 @@ export const STR: Dict = {
   secLog: { id: 'Riwayat Seduh', en: 'Brew Log' },
 
   // water
+  waterBrand: { id: 'Merek air', en: 'Water brand' },
   waterTemp: { id: 'Suhu air', en: 'Water temperature' },
   mineralProfile: { id: 'Profil mineral (SCA)', en: 'Mineral profile (SCA)' },
   totalHardness: { id: 'Kesadahan total', en: 'Total hardness' },
@@ -45,13 +46,20 @@ export const STR: Dict = {
   targetMicron: { id: 'Target micron', en: 'Target micron' },
   suggestedSetting: { id: 'Saran klik/setelan', en: 'Suggested setting' },
   micron: { id: 'micron', en: 'micron' },
+  category: { id: 'Kategori', en: 'Category' },
+  clicks: { id: 'Klik', en: 'Clicks' },
+  stepless: { id: 'Stepless', en: 'Stepless' },
+  range: { id: 'Rentang', en: 'Range' },
 
   // beans
   origin: { id: 'Asal (origin)', en: 'Origin' },
+  region: { id: 'Region', en: 'Region' },
   variety: { id: 'Varietas', en: 'Variety' },
   process: { id: 'Proses pasca panen', en: 'Post-harvest process' },
   roastLevel: { id: 'Roast (Agtron)', en: 'Roast (Agtron)' },
   flavorTendency: { id: 'Kecenderungan rasa', en: 'Flavor tendency' },
+  elevation: { id: 'Elevasi', en: 'Elevation' },
+  roastIdeal: { id: 'Roast ideal', en: 'Ideal roast' },
 
   // dripper / filter
   dripperType: { id: 'Tipe', en: 'Type' },
@@ -61,6 +69,7 @@ export const STR: Dict = {
   flowSpeed: { id: 'Kecepatan aliran', en: 'Flow speed' },
   characteristics: { id: 'Karakteristik', en: 'Characteristics' },
   thickness: { id: 'Ketebalan', en: 'Thickness' },
+  immersion: { id: 'Immersion', en: 'Immersion' },
 
   // recipe
   dose: { id: 'Dosis kopi', en: 'Coffee dose' },
@@ -69,6 +78,15 @@ export const STR: Dict = {
   flowRate: { id: 'Flow rate target', en: 'Target flow rate' },
   pours: { id: 'Tuangan', en: 'Pours' },
   pourStyle: { id: 'Gaya tuang', en: 'Pour style' },
+  pourTime: { id: 'Waktu (s)', en: 'Time (s)' },
+  pourWater: { id: 'Air (g)', en: 'Water (g)' },
+  switchTiming: { id: 'Timing switch (immersion)', en: 'Switch timing (immersion)' },
+  switchClose: { id: 'Tutup switch', en: 'Close switch' },
+  switchOpen: { id: 'Buka switch', en: 'Open switch' },
+  switchHint: {
+    id: 'Tutup = steep/immersion; buka = mulai drawdown. Kosongkan bila tidak dipakai.',
+    en: 'Close = steep/immersion; open = start drawdown. Leave empty if unused.',
+  },
   addPour: { id: '+ Tambah tuangan', en: '+ Add pour' },
   resetPours: { id: 'Reset bagi rata', en: 'Reset even split' },
   fixedRecipe: { id: 'Resep tetap (preset juara)', en: 'Fixed recipe (champion preset)' },

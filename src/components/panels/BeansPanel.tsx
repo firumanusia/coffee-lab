@@ -1,41 +1,69 @@
-import { ORIGINS } from '../../data/origins'
-import { PROCESSES } from '../../data/processes'
+import { useMemo } from 'react'
+import { BEANS } from '../../data/generated/beans'
+import { processInfo } from '../../data/processInfo'
 import { ROAST_BANDS, roastFromAgtron } from '../../data/roast'
 import { useLocalized, useT } from '../../i18n/LanguageContext'
 import type { BrewStore } from '../../store/useBrewStore'
 import { Panel, Select, Slider } from '../ui'
 import { Icons } from '../icons'
 
+const uniq = (arr: string[]) => Array.from(new Set(arr))
+
 export function BeansPanel({ store }: { store: BrewStore }) {
-  const { t } = useT()
+  const { t, lang } = useT()
   const L = useLocalized()
   const { config, update } = store
 
-  const origin = ORIGINS.find((o) => o.id === config.originId) ?? ORIGINS[0]
-  const process = PROCESSES.find((p) => p.id === config.processId) ?? PROCESSES[0]
+  const bean = BEANS.find((b) => b.id === config.beanId) ?? BEANS[0]
   const roast = roastFromAgtron(config.agtron)
+  const proc = processInfo(config.processId)
+
+  const origins = useMemo(() => uniq(BEANS.map((b) => b.origin)), [])
+  const regions = useMemo(() => uniq(BEANS.filter((b) => b.origin === bean.origin).map((b) => b.region)), [bean.origin])
+  const varieties = useMemo(
+    () => BEANS.filter((b) => b.origin === bean.origin && b.region === bean.region),
+    [bean.origin, bean.region],
+  )
+
+  const selectBean = (b: (typeof BEANS)[number]) =>
+    update({ beanId: b.id, processId: b.processes[0] ?? 'Washed', agtron: b.agtron })
+
+  const onOrigin = (origin: string) => {
+    const b = BEANS.find((x) => x.origin === origin)
+    if (b) selectBean(b)
+  }
+  const onRegion = (region: string) => {
+    const b = BEANS.find((x) => x.origin === bean.origin && x.region === region)
+    if (b) selectBean(b)
+  }
+  const onVariety = (id: string) => {
+    const b = BEANS.find((x) => x.id === id)
+    if (b) selectBean(b)
+  }
+
+  // reversed so the bar reads dark (low Agtron, left) → light (high Agtron, right),
+  // matching the slider direction.
+  const gradientBands = [...ROAST_BANDS].reverse()
 
   return (
     <Panel title={t('secBeans')} icon={<Icons.beans size={16} />}>
       <Select
         label={t('origin')}
-        value={config.originId}
-        options={ORIGINS.map((o) => ({ value: o.id, label: o.name }))}
-        onChange={(originId) => {
-          const o = ORIGINS.find((x) => x.id === originId)!
-          update({ originId, variety: o.varieties[0] })
-        }}
+        value={bean.origin}
+        options={origins.map((o) => ({ value: o, label: o }))}
+        onChange={onOrigin}
       />
+      <Select label={t('region')} value={bean.region} options={regions.map((r) => ({ value: r, label: r }))} onChange={onRegion} />
       <Select
-        label={t('variety')}
-        value={config.variety}
-        options={origin.varieties.map((v) => ({ value: v, label: v }))}
-        onChange={(variety) => update({ variety })}
+        label={`${t('variety')} (${bean.species})`}
+        value={bean.id}
+        options={varieties.map((b) => ({ value: b.id, label: `${b.variety} · ${b.processes.join('/')}` }))}
+        onChange={onVariety}
       />
       <Select
         label={t('process')}
         value={config.processId}
-        options={PROCESSES.map((p) => ({ value: p.id, label: L(p.name) }))}
+        options={(bean.processes.length ? bean.processes : ['Washed']).map((p) => ({ value: p, label: p }))}
         onChange={(processId) => update({ processId })}
       />
 
@@ -47,20 +75,29 @@ export function BeansPanel({ store }: { store: BrewStore }) {
         suffix="Agtron"
         onChange={(v) => update({ agtron: v })}
       />
-      <div className="mb-3 flex h-3 overflow-hidden rounded-full">
-        {ROAST_BANDS.map((b) => (
+      <div className="mb-1 flex h-3 overflow-hidden rounded-full">
+        {gradientBands.map((b) => (
           <div key={b.id} className="flex-1" style={{ background: b.color }} title={L(b.name)} />
         ))}
       </div>
+      <div className="mb-3 flex justify-between text-[10px] text-coffee-400">
+        <span>{lang === 'id' ? 'Gelap · Agtron 25' : 'Dark · Agtron 25'}</span>
+        <span>{lang === 'id' ? 'Agtron 100 · Terang' : 'Agtron 100 · Light'}</span>
+      </div>
 
       <div className="rounded-xl border border-coffee-800/60 bg-coffee-900/30 p-3 text-xs">
-        <div className="field-label">{t('flavorTendency')}</div>
+        <div className="mb-1 flex flex-wrap gap-x-3 gap-y-0.5 text-coffee-300">
+          <span>Body: <b className="text-crema">{bean.body}</b></span>
+          <span>Acidity: <b className="text-crema">{bean.acidity}</b></span>
+          <span>Sweetness: <b className="text-crema">{bean.sweetness}</b></span>
+        </div>
+        <div className="mb-1 text-coffee-300">
+          {t('elevation')}: <b className="text-crema">{bean.elevation} mdpl</b> · {t('roastIdeal')}: <b className="text-crema">{bean.roastIdeal}</b>
+        </div>
         <p className="text-coffee-200">
-          <b className="text-crema">{origin.name}:</b> {L(origin.flavor)}
+          <b className="text-crema">{bean.aroma}</b> — {bean.notes}
         </p>
-        <p className="mt-1 text-coffee-200">
-          <b className="text-crema">{L(process.name)}:</b> {L(process.flavor)}
-        </p>
+        <p className="mt-1 text-coffee-400">{L(proc.flavor)}</p>
       </div>
     </Panel>
   )

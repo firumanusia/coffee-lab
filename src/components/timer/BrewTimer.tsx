@@ -84,6 +84,12 @@ export function BrewTimer({ store }: { store: BrewStore }) {
             </span>
           </div>
         ))}
+        {config.switchCloseAt !== undefined && (
+          <SwitchRow at={config.switchCloseAt} label={t('switchClose')} done={elapsed >= config.switchCloseAt} />
+        )}
+        {config.switchOpenAt !== undefined && (
+          <SwitchRow at={config.switchOpenAt} label={t('switchOpen')} done={elapsed >= config.switchOpenAt} />
+        )}
         <div className="flex items-center justify-between rounded-lg border border-brand-teal/40 bg-brand-teal/10 px-3 py-1.5 text-xs text-brand-tealLight">
           <span className="font-mono font-bold">~{fmt(finish)}</span>
           <span>{t('done')}</span>
@@ -91,6 +97,20 @@ export function BrewTimer({ store }: { store: BrewStore }) {
         </div>
       </div>
     </Panel>
+  )
+}
+
+function SwitchRow({ at, label, done }: { at: number; label: string; done: boolean }) {
+  return (
+    <div
+      className={`flex items-center justify-between rounded-lg border border-dashed px-3 py-1.5 text-xs transition ${
+        done ? 'border-coffee-800/60 text-coffee-400' : 'border-brand-teal/50 text-brand-tealLight'
+      }`}
+    >
+      <span className="font-mono font-bold">{fmt(at)}</span>
+      <span>🔀 {label}</span>
+      <span />
+    </div>
   )
 }
 

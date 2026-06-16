@@ -1,4 +1,5 @@
 import { POUR_STYLES, RECIPES, type PourStep, type PourStyle } from '../../data/recipes'
+import { DRIPPERS } from '../../data/generated/drippers'
 import { useLocalized, useT } from '../../i18n/LanguageContext'
 import type { BrewStore } from '../../store/useBrewStore'
 import { Panel, Select, Slider } from '../ui'
@@ -10,6 +11,8 @@ export function RecipePanel({ store }: { store: BrewStore }) {
   const { config, update, applyRecipe } = store
 
   const recipe = RECIPES.find((r) => r.id === config.recipeId)
+  const dripper = DRIPPERS.find((d) => d.id === config.dripperId)
+  const isImmersion = !!dripper?.immersion
   const totalWater = config.dose * config.ratio
   const pourSum = config.pours.reduce((s, p) => s + p.frac, 0)
 
@@ -57,6 +60,15 @@ export function RecipePanel({ store }: { store: BrewStore }) {
           {config.fixedPours ? t('fixedRecipe') : t('editableRecipe')}
         </span>
       </div>
+
+      {!config.fixedPours && (
+        <div className="mb-1 grid grid-cols-[auto_1fr_1fr_auto] gap-2 px-2 text-[10px] uppercase tracking-wide text-coffee-400">
+          <span className="w-5 text-center">#</span>
+          <span>{t('pourTime')}</span>
+          <span>{t('pourWater')}</span>
+          <span className="pr-6 text-right">{t('pourStyle')}</span>
+        </div>
+      )}
 
       <div className="space-y-1.5">
         {config.pours.map((p, i) => {
@@ -129,6 +141,41 @@ export function RecipePanel({ store }: { store: BrewStore }) {
           <span className={`text-[11px] ${Math.abs(pourSum - 1) > 0.02 ? 'text-amber-400' : 'text-coffee-400'}`}>
             Σ {Math.round(pourSum * 100)}%
           </span>
+        </div>
+      )}
+
+      {isImmersion && (
+        <div className="mt-3 rounded-lg border border-brand-teal/40 bg-brand-teal/10 p-2">
+          <div className="mb-1 flex items-center gap-2 text-[11px] font-semibold text-brand-tealLight">
+            {t('switchTiming')}
+          </div>
+          <div className="grid grid-cols-2 gap-2">
+            <label className="text-xs">
+              <span className="field-label">{t('switchClose')} (s)</span>
+              <input
+                type="number"
+                className="input px-2 py-1"
+                min={0}
+                step={5}
+                placeholder="0"
+                value={config.switchCloseAt ?? ''}
+                onChange={(e) => update({ switchCloseAt: e.target.value ? Number(e.target.value) : undefined })}
+              />
+            </label>
+            <label className="text-xs">
+              <span className="field-label">{t('switchOpen')} (s)</span>
+              <input
+                type="number"
+                className="input px-2 py-1"
+                min={0}
+                step={5}
+                placeholder="60"
+                value={config.switchOpenAt ?? ''}
+                onChange={(e) => update({ switchOpenAt: e.target.value ? Number(e.target.value) : undefined })}
+              />
+            </label>
+          </div>
+          <p className="mt-1 text-[10px] text-coffee-400">{t('switchHint')}</p>
         </div>
       )}
     </Panel>

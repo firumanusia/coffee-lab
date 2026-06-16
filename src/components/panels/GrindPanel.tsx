@@ -1,8 +1,8 @@
-import { GRINDERS, suggestSetting } from '../../data/grinders'
+import { GRINDERS, suggestSetting } from '../../data/generated/grinders'
 import { MICRON_RANGE, grindBandFor } from '../../data/grindChart'
 import { useLocalized, useT } from '../../i18n/LanguageContext'
 import type { BrewStore } from '../../store/useBrewStore'
-import { ChipGroup, Panel, Select, Slider } from '../ui'
+import { Panel, Select, Slider } from '../ui'
 import { Icons } from '../icons'
 
 export function GrindPanel({ store }: { store: BrewStore }) {
@@ -14,49 +14,49 @@ export function GrindPanel({ store }: { store: BrewStore }) {
   const band = grindBandFor(config.micron)
   const setting = suggestSetting(grinder, config.micron)
 
-  const typeOf = (g: (typeof GRINDERS)[number]) => g.type
-  const filtered = GRINDERS.filter((g) => typeOf(g) === grinder.type)
+  // clamp the micron slider to this grinder's usable range
+  const min = Math.max(MICRON_RANGE.min, grinder.minMicron || MICRON_RANGE.min)
+  const max = Math.min(MICRON_RANGE.max + 200, grinder.maxMicron || MICRON_RANGE.max)
 
   return (
     <Panel title={t('secGrind')} icon={<Icons.grind size={16} />}>
-      <ChipGroup
-        label={t('grinderType')}
-        value={grinder.type}
-        options={[
-          { value: 'hand', label: t('hand') },
-          { value: 'electric', label: t('electric') },
-        ]}
-        onChange={(type) => {
-          const first = GRINDERS.find((g) => g.type === type)
-          if (first) update({ grinderId: first.id })
-        }}
-      />
       <Select
         label={t('grinderModel')}
         value={config.grinderId}
-        options={filtered.map((g) => ({ value: g.id, label: `${g.brand} ${g.model}` }))}
+        options={GRINDERS.map((g) => ({ value: g.id, label: `${g.brand} ${g.model}` }))}
         onChange={(grinderId) => update({ grinderId })}
       />
       <Slider
         label={t('targetMicron')}
-        value={config.micron}
-        min={MICRON_RANGE.min}
-        max={MICRON_RANGE.max}
+        value={Math.min(max, Math.max(min, config.micron))}
+        min={min}
+        max={max}
         step={10}
         suffix={t('micron')}
         onChange={(v) => update({ micron: v })}
       />
-      <div className="grid grid-cols-2 gap-2 text-center">
+      <div className="grid grid-cols-3 gap-2 text-center">
         <div className="metric">
-          <div className="metric-value text-lg">{L(band.name)}</div>
-          <div className="metric-label">{L(band.methods)}</div>
+          <div className="metric-value text-base">{L(band.name)}</div>
+          <div className="metric-label">{t('category')}</div>
         </div>
         <div className="metric">
-          <div className="metric-value text-lg">~{setting}</div>
-          <div className="metric-label">{t('suggestedSetting')}</div>
+          <div className="metric-value text-base">{setting === null ? '—' : `~${setting}`}</div>
+          <div className="metric-label">{grinder.stepless ? t('stepless') : t('clicks')}</div>
+        </div>
+        <div className="metric">
+          <div className="metric-value text-base">
+            {grinder.minMicron}–{grinder.maxMicron}
+          </div>
+          <div className="metric-label">{t('range')} µm</div>
         </div>
       </div>
-      <p className="mt-2 text-[11px] text-coffee-400">{L(grinder.notes)}</p>
+      <p className="mt-2 text-[11px] text-coffee-400">
+        {grinder.stepType}
+        {grinder.totalSteps ? ` · ${grinder.totalSteps}` : ''}
+        {grinder.umPerStep ? ` · ~${grinder.umPerStep}µm/${t('clicks').toLowerCase()}` : ''}
+      </p>
+      {grinder.note && <p className="mt-1 text-[11px] text-coffee-400">{grinder.note}</p>}
     </Panel>
   )
 }

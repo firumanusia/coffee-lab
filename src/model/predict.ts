@@ -1,6 +1,6 @@
-import { DRIPPERS } from '../data/drippers'
-import { FILTERS } from '../data/filters'
-import { PROCESSES } from '../data/processes'
+import { DRIPPERS } from '../data/generated/drippers'
+import { FILTERS } from '../data/generated/filters'
+import { processInfo } from '../data/processInfo'
 import { roastFromAgtron } from '../data/roast'
 import type { BrewConfig } from '../store/types'
 
@@ -25,7 +25,7 @@ const ABSORPTION = 2.0 // g water retained per g coffee
 export function predict(c: BrewConfig): Prediction {
   const dripper = DRIPPERS.find((d) => d.id === c.dripperId) ?? DRIPPERS[0]
   const filter = FILTERS.find((f) => f.id === c.filterId) ?? FILTERS[0]
-  const process = PROCESSES.find((p) => p.id === c.processId) ?? PROCESSES[0]
+  const process = processInfo(c.processId)
   const roast = roastFromAgtron(c.agtron)
 
   const totalWater = c.dose * c.ratio

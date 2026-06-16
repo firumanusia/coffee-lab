@@ -1,47 +1,48 @@
-import { DRIPPERS } from '../../data/drippers'
-import { FILTERS } from '../../data/filters'
-import { useLocalized, useT } from '../../i18n/LanguageContext'
+import { DRIPPERS } from '../../data/generated/drippers'
+import { FILTERS } from '../../data/generated/filters'
+import { useT } from '../../i18n/LanguageContext'
 import type { BrewStore } from '../../store/useBrewStore'
 import { Panel, Select } from '../ui'
 import { Icons } from '../icons'
 
-const FLOW_LABEL = (f: number, lang: 'id' | 'en') =>
-  f >= 1.1 ? (lang === 'id' ? 'Cepat' : 'Fast') : f <= 0.85 ? (lang === 'id' ? 'Lambat' : 'Slow') : lang === 'id' ? 'Sedang' : 'Medium'
-
 export function GearPanel({ store }: { store: BrewStore }) {
-  const { t, lang } = useT()
-  const L = useLocalized()
+  const { t } = useT()
   const { config, update } = store
 
   const dripper = DRIPPERS.find((d) => d.id === config.dripperId) ?? DRIPPERS[0]
   const filter = FILTERS.find((f) => f.id === config.filterId) ?? FILTERS[0]
-
-  const geoLabel = (g: string) => (g === 'conical' ? t('conical') : g === 'flat' ? t('flat') : t('hybrid'))
 
   return (
     <Panel title={`${t('secDripper')} · ${t('secFilter')}`} icon={<Icons.gear size={16} />}>
       <Select
         label={t('secDripper')}
         value={config.dripperId}
-        options={DRIPPERS.map((d) => ({ value: d.id, label: `${d.brand} ${d.name} (${geoLabel(d.geometry)})` }))}
+        options={DRIPPERS.map((d) => ({ value: d.id, label: `${d.brand} ${d.model}` }))}
         onChange={(dripperId) => update({ dripperId })}
       />
       <div className="mb-3 rounded-lg border border-coffee-800/60 bg-coffee-900/30 p-2 text-xs text-coffee-200">
-        <span className="font-semibold text-crema">{t('flowSpeed')}: {FLOW_LABEL(dripper.flowFactor, lang)}</span>
-        <p className="mt-0.5">{L(dripper.characteristics)}</p>
+        <span className="font-semibold capitalize text-crema">{dripper.geometry}</span> · {dripper.typeRaw}
+        {dripper.immersion && (
+          <span className="ml-1 rounded-full bg-brand-teal/20 px-2 py-0.5 text-[10px] font-semibold text-brand-tealLight">
+            {t('immersion')}
+          </span>
+        )}
       </div>
 
       <Select
         label={t('secFilter')}
         value={config.filterId}
-        options={FILTERS.map((f) => ({ value: f.id, label: `${f.brand} ${f.name}` }))}
+        options={FILTERS.map((f) => ({ value: f.id, label: `${f.brand} ${f.model}` }))}
         onChange={(filterId) => update({ filterId })}
       />
       <div className="rounded-lg border border-coffee-800/60 bg-coffee-900/30 p-2 text-xs text-coffee-200">
-        <span className="font-semibold text-crema">
-          {t('thickness')}: {L(filter.thickness)} · {t('flowSpeed')}: {FLOW_LABEL(filter.flowFactor, lang)}
-        </span>
-        <p className="mt-0.5">{L(filter.characteristics)}</p>
+        <span className="font-semibold text-crema">{filter.material}</span> · {t('flowSpeed')}: {filter.flowRate}
+        <div className="mt-0.5 flex flex-wrap gap-x-3 text-[11px] text-coffee-300">
+          <span>Body: {filter.body}</span>
+          <span>Clarity: {filter.clarity}</span>
+          <span>Sweetness: {filter.sweetness}</span>
+          <span>Acidity: {filter.acidity}</span>
+        </div>
       </div>
     </Panel>
   )
