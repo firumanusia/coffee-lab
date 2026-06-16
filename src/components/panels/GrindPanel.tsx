@@ -1,20 +1,49 @@
-import { GRINDERS, suggestSetting } from '../../data/generated/grinders'
+import { useEffect, useState } from 'react'
 import { MICRON_RANGE, grindBandFor } from '../../data/grindChart'
 import { useLocalized, useT } from '../../i18n/LanguageContext'
 import type { BrewStore } from '../../store/useBrewStore'
 import { Panel, Select, Slider } from '../ui'
 import { Icons } from '../icons'
 
+// The grinder catalog (227 entries with notes) is the heaviest data module, so
+// it is code-split and loaded on demand to keep the initial bundle light.
+type GrinderModule = typeof import('../../data/generated/grinders')
+
 export function GrindPanel({ store }: { store: BrewStore }) {
   const { t } = useT()
   const L = useLocalized()
   const { config, update } = store
+  const [mod, setMod] = useState<GrinderModule | null>(null)
 
+  useEffect(() => {
+    let alive = true
+    import('../../data/generated/grinders').then((m) => alive && setMod(m))
+    return () => {
+      alive = false
+    }
+  }, [])
+
+  if (!mod) {
+    return (
+      <Panel title={t('secGrind')} icon={<Icons.grind size={16} />}>
+        <div className="animate-pulse space-y-2">
+          <div className="h-9 rounded-lg bg-coffee-900/50" />
+          <div className="h-6 rounded-lg bg-coffee-900/40" />
+          <div className="grid grid-cols-3 gap-2">
+            <div className="h-14 rounded-xl bg-coffee-900/40" />
+            <div className="h-14 rounded-xl bg-coffee-900/40" />
+            <div className="h-14 rounded-xl bg-coffee-900/40" />
+          </div>
+        </div>
+      </Panel>
+    )
+  }
+
+  const { GRINDERS, suggestSetting } = mod
   const grinder = GRINDERS.find((g) => g.id === config.grinderId) ?? GRINDERS[0]
   const band = grindBandFor(config.micron)
   const setting = suggestSetting(grinder, config.micron)
 
-  // clamp the micron slider to this grinder's usable range
   const min = Math.max(MICRON_RANGE.min, grinder.minMicron || MICRON_RANGE.min)
   const max = Math.min(MICRON_RANGE.max + 200, grinder.maxMicron || MICRON_RANGE.max)
 
