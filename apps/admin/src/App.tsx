@@ -20,6 +20,9 @@ import { dataProvider } from './dataProvider'
 import { authProvider } from './authProvider'
 import { lightTheme, darkTheme } from './theme'
 import { LoginPage } from './LoginPage'
+import { LayoutShell } from './layout'
+import { Dashboard } from './Dashboard'
+import { ResourceIcons } from './icons'
 
 const search = [<SearchInput key="q" source="q" alwaysOn />]
 
@@ -202,20 +205,22 @@ export default function App() {
       dataProvider={dataProvider}
       authProvider={authProvider}
       loginPage={LoginPage}
+      layout={LayoutShell}
+      dashboard={Dashboard}
       theme={lightTheme}
       darkTheme={darkTheme}
       defaultTheme="light"
       title="MENOOWEL Admin"
       requireAuth
     >
-      <Resource name="waters" list={WaterList} edit={() => <Edit><WaterForm /></Edit>} create={() => <Create><WaterForm create /></Create>} />
-      <Resource name="beans" list={BeanList} edit={() => <Edit><BeanForm /></Edit>} create={() => <Create><BeanForm create /></Create>} />
-      <Resource name="grinders" list={GrinderList} edit={() => <Edit><GrinderForm /></Edit>} create={() => <Create><GrinderForm create /></Create>} />
-      <Resource name="drippers" list={DripperList} edit={() => <Edit><DripperForm /></Edit>} create={() => <Create><DripperForm create /></Create>} />
-      <Resource name="filters" list={FilterList} edit={() => <Edit><FilterForm /></Edit>} create={() => <Create><FilterForm create /></Create>} />
-      <Resource name="recipes" list={RecipeList} edit={() => <Edit><RecipeForm /></Edit>} create={() => <Create><RecipeForm create /></Create>} />
-      <Resource name="processes" list={ProcessList} edit={() => <Edit><ProcessForm /></Edit>} create={() => <Create><ProcessForm create /></Create>} />
-      <Resource name="users" list={UserList} edit={() => <Edit><UserEditForm /></Edit>} />
+      <Resource name="waters" icon={ResourceIcons.waters} list={WaterList} edit={() => <Edit><WaterForm /></Edit>} create={() => <Create><WaterForm create /></Create>} />
+      <Resource name="beans" icon={ResourceIcons.beans} list={BeanList} edit={() => <Edit><BeanForm /></Edit>} create={() => <Create><BeanForm create /></Create>} />
+      <Resource name="grinders" icon={ResourceIcons.grinders} list={GrinderList} edit={() => <Edit><GrinderForm /></Edit>} create={() => <Create><GrinderForm create /></Create>} />
+      <Resource name="drippers" icon={ResourceIcons.drippers} list={DripperList} edit={() => <Edit><DripperForm /></Edit>} create={() => <Create><DripperForm create /></Create>} />
+      <Resource name="filters" icon={ResourceIcons.filters} list={FilterList} edit={() => <Edit><FilterForm /></Edit>} create={() => <Create><FilterForm create /></Create>} />
+      <Resource name="recipes" icon={ResourceIcons.recipes} list={RecipeList} edit={() => <Edit><RecipeForm /></Edit>} create={() => <Create><RecipeForm create /></Create>} />
+      <Resource name="processes" icon={ResourceIcons.processes} list={ProcessList} edit={() => <Edit><ProcessForm /></Edit>} create={() => <Create><ProcessForm create /></Create>} />
+      <Resource name="users" icon={ResourceIcons.users} list={UserList} edit={() => <Edit><UserEditForm /></Edit>} />
     </Admin>
   )
 }
