@@ -58,9 +58,17 @@ function TabContent({ tab, store }: { tab: string; store: BrewStore }) {
   }
 }
 
-/** A dashboard column that scrolls internally so the page itself never scrolls. */
+/**
+ * A dashboard column. The last panel grows to fill leftover height so every
+ * column reaches the bottom flush (no ragged empty space); it scrolls
+ * internally only if its own content overflows on short screens.
+ */
 function Col({ children }: { children: ReactNode }) {
-  return <div className="flex min-h-0 flex-col gap-3 overflow-y-auto pr-1">{children}</div>
+  return (
+    <div className="flex min-h-0 flex-col gap-3 [&>section:last-child]:min-h-0 [&>section:last-child]:flex-1 [&>section:last-child]:overflow-y-auto">
+      {children}
+    </div>
+  )
 }
 
 function DesktopDashboard({ store }: { store: BrewStore }) {
