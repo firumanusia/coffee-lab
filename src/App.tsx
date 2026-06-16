@@ -1,8 +1,10 @@
 import { useState, type ReactNode } from 'react'
 import { Header } from './components/Header'
+import { Modal } from './components/Modal'
 import { BottomNav, type TabDef } from './components/BottomNav'
 import { MobileResultBar } from './components/MobileResultBar'
 import { Icons } from './components/icons'
+import { useT } from './i18n/LanguageContext'
 import { BeansPanel } from './components/panels/BeansPanel'
 import { GearPanel } from './components/panels/GearPanel'
 import { GrindPanel } from './components/panels/GrindPanel'
@@ -62,9 +64,23 @@ function Col({ children }: { children: ReactNode }) {
 }
 
 function DesktopDashboard({ store }: { store: BrewStore }) {
+  const { t } = useT()
+  const [modal, setModal] = useState<null | 'presets' | 'log'>(null)
+
+  const actions = (
+    <>
+      <button className="btn-ghost px-3 py-1.5 text-xs" onClick={() => setModal('presets')}>
+        <Icons.presets size={15} /> {t('secPresets')}
+      </button>
+      <button className="btn-ghost px-3 py-1.5 text-xs" onClick={() => setModal('log')}>
+        <Icons.log size={15} /> {t('secLog')}
+      </button>
+    </>
+  )
+
   return (
     <div className="flex h-screen flex-col overflow-hidden px-4 py-3">
-      <Header compact />
+      <Header compact actions={actions} />
       <main className="grid min-h-0 flex-1 grid-cols-2 grid-rows-2 gap-3 xl:grid-cols-4 xl:grid-rows-1">
         <Col>
           <BeansPanel store={store} />
@@ -73,7 +89,6 @@ function DesktopDashboard({ store }: { store: BrewStore }) {
         <Col>
           <GrindPanel store={store} />
           <GearPanel store={store} />
-          <PresetBar store={store} />
         </Col>
         <Col>
           <RecipePanel store={store} />
@@ -81,9 +96,19 @@ function DesktopDashboard({ store }: { store: BrewStore }) {
         </Col>
         <Col>
           <ResultCards store={store} />
-          <BrewLog store={store} />
         </Col>
       </main>
+
+      {modal === 'presets' && (
+        <Modal label={t('secPresets')} onClose={() => setModal(null)}>
+          <PresetBar store={store} />
+        </Modal>
+      )}
+      {modal === 'log' && (
+        <Modal label={t('secLog')} onClose={() => setModal(null)}>
+          <BrewLog store={store} />
+        </Modal>
+      )}
     </div>
   )
 }

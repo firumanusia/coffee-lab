@@ -1,6 +1,7 @@
+import type { ReactNode } from 'react'
 import { useT } from '../i18n/LanguageContext'
 
-export function Header({ compact = false }: { compact?: boolean }) {
+export function Header({ compact = false, actions }: { compact?: boolean; actions?: ReactNode }) {
   const { t, lang, setLang } = useT()
   return (
     <header
@@ -16,7 +17,9 @@ export function Header({ compact = false }: { compact?: boolean }) {
         />
         {!compact && <p className="text-center text-xs text-coffee-300 sm:text-left">{t('appTagline')}</p>}
       </div>
-      <div className="inline-flex overflow-hidden rounded-lg border border-coffee-800 text-sm">
+      <div className="flex items-center gap-2">
+        {actions}
+        <div className="inline-flex overflow-hidden rounded-lg border border-coffee-800 text-sm">
         {(['id', 'en'] as const).map((l) => (
           <button
             key={l}
@@ -28,6 +31,7 @@ export function Header({ compact = false }: { compact?: boolean }) {
             {l.toUpperCase()}
           </button>
         ))}
+        </div>
       </div>
     </header>
   )
