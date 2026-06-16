@@ -1,9 +1,10 @@
-import { ConflictException, Injectable, UnauthorizedException } from '@nestjs/common'
+import { ConflictException, ForbiddenException, Injectable, UnauthorizedException } from '@nestjs/common'
 import { JwtService } from '@nestjs/jwt'
 import { ConfigService } from '@nestjs/config'
 import type { User } from '@prisma/client'
 import * as argon2 from 'argon2'
 import { PrismaService } from '../prisma/prisma.service'
+import { MailService } from '../mail/mail.service'
 
 export interface Tokens {
   accessToken: string
@@ -16,19 +17,27 @@ export class AuthService {
     private readonly prisma: PrismaService,
     private readonly jwt: JwtService,
     private readonly config: ConfigService,
+    private readonly mail: MailService,
   ) {}
 
   private publicUser(u: User) {
     return { id: u.id, email: u.email, name: u.name, role: u.role }
   }
 
+  /** Email + password registration. Sends a verification code; no tokens until verified. */
   async register(email: string, password: string, name?: string) {
     const existing = await this.prisma.user.findUnique({ where: { email } })
-    if (existing) throw new ConflictException('Email already registered')
+    if (existing) {
+      if (!existing.emailVerified) {
+        await this.issueCode(existing.id, email)
+        return { needsVerification: true, email }
+      }
+      throw new ConflictException('Email already registered')
+    }
     const passwordHash = await argon2.hash(password)
-    const user = await this.prisma.user.create({ data: { email, passwordHash, name } })
-    const tokens = await this.issueTokens(user)
-    return { user: this.publicUser(user), ...tokens }
+    const user = await this.prisma.user.create({ data: { email, passwordHash, name, emailVerified: false } })
+    await this.issueCode(user.id, email)
+    return { needsVerification: true, email }
   }
 
   async login(email: string, password: string) {
@@ -36,8 +45,46 @@ export class AuthService {
     if (!user || !user.passwordHash) throw new UnauthorizedException('Invalid credentials')
     const ok = await argon2.verify(user.passwordHash, password)
     if (!ok) throw new UnauthorizedException('Invalid credentials')
+    if (!user.emailVerified) {
+      await this.issueCode(user.id, email)
+      throw new ForbiddenException('EMAIL_NOT_VERIFIED')
+    }
     const tokens = await this.issueTokens(user)
     return { user: this.publicUser(user), ...tokens }
+  }
+
+  /** Generate + email a 6-digit code (15 min expiry). */
+  private async issueCode(userId: string, email: string) {
+    const code = String(Math.floor(100000 + Math.random() * 900000))
+    await this.prisma.user.update({
+      where: { id: userId },
+      data: { verifyCode: code, verifyExpiry: new Date(Date.now() + 15 * 60 * 1000) },
+    })
+    await this.mail.sendVerificationCode(email, code)
+  }
+
+  async verifyEmail(email: string, code: string) {
+    const user = await this.prisma.user.findUnique({ where: { email } })
+    if (!user) throw new UnauthorizedException('Invalid code')
+    if (user.emailVerified) {
+      const tokens = await this.issueTokens(user)
+      return { user: this.publicUser(user), ...tokens }
+    }
+    if (!user.verifyCode || !user.verifyExpiry || user.verifyExpiry < new Date() || user.verifyCode !== code) {
+      throw new UnauthorizedException('Invalid or expired code')
+    }
+    const updated = await this.prisma.user.update({
+      where: { id: user.id },
+      data: { emailVerified: true, verifyCode: null, verifyExpiry: null },
+    })
+    const tokens = await this.issueTokens(updated)
+    return { user: this.publicUser(updated), ...tokens }
+  }
+
+  async resendVerification(email: string) {
+    const user = await this.prisma.user.findUnique({ where: { email } })
+    if (user && !user.emailVerified) await this.issueCode(user.id, email)
+    return { ok: true } // don't leak whether the account exists
   }
 
   /** Find-or-create a user from a verified Google profile, then issue tokens. */
@@ -47,10 +94,13 @@ export class AuthService {
     })
     if (!user) {
       user = await this.prisma.user.create({
-        data: { googleId: profile.googleId, email: profile.email, name: profile.name },
+        data: { googleId: profile.googleId, email: profile.email, name: profile.name, emailVerified: true },
       })
     } else if (!user.googleId) {
-      user = await this.prisma.user.update({ where: { id: user.id }, data: { googleId: profile.googleId } })
+      user = await this.prisma.user.update({
+        where: { id: user.id },
+        data: { googleId: profile.googleId, emailVerified: true },
+      })
     }
     const tokens = await this.issueTokens(user)
     return { user: this.publicUser(user), ...tokens }

@@ -19,6 +19,9 @@ model User {
   googleId      String?        @unique
   name          String?
   role          Role           @default(USER)
+  emailVerified Boolean        @default(true)
+  verifyCode    String?
+  verifyExpiry  DateTime?
   presets       Preset[]
   brewLogs      BrewLog[]
   refreshTokens RefreshToken[]

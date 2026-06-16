@@ -12,7 +12,9 @@ interface AuthCtx {
   user: AuthUser | null
   loading: boolean
   login: (email: string, password: string) => Promise<void>
-  register: (email: string, password: string, name?: string) => Promise<void>
+  register: (email: string, password: string, name?: string) => Promise<{ needsVerification?: boolean; email?: string }>
+  verifyEmail: (email: string, code: string) => Promise<void>
+  resendCode: (email: string) => Promise<void>
   logout: () => Promise<void>
   loginWithGoogle: () => void
 }
@@ -51,7 +53,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     user,
     loading,
     login: async (email, password) => handle(await api.post('/auth/login', { email, password })),
-    register: async (email, password, name) => handle(await api.post('/auth/register', { email, password, name })),
+    register: (email, password, name) => api.post('/auth/register', { email, password, name }),
+    verifyEmail: async (email, code) => handle(await api.post('/auth/verify', { email, code })),
+    resendCode: async (email) => {
+      await api.post('/auth/resend', { email })
+    },
     logout: async () => {
       await api.post('/auth/logout').catch(() => {})
       setAccessToken(null)

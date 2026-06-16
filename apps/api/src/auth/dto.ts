@@ -26,3 +26,16 @@ export class RefreshDto {
   @IsString()
   refreshToken?: string
 }
+
+export class VerifyDto {
+  @IsEmail()
+  email!: string
+
+  @IsString()
+  code!: string
+}
+
+export class ResendDto {
+  @IsEmail()
+  email!: string
+}

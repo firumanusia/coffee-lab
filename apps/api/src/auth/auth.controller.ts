@@ -3,7 +3,7 @@ import { ApiBearerAuth, ApiTags } from '@nestjs/swagger'
 import { ConfigService } from '@nestjs/config'
 import type { Request, Response } from 'express'
 import { AuthService } from './auth.service'
-import { LoginDto, RefreshDto, RegisterDto } from './dto'
+import { LoginDto, RefreshDto, RegisterDto, ResendDto, VerifyDto } from './dto'
 import { GoogleAuthGuard, JwtAuthGuard } from './guards'
 import { CurrentUser, type AuthUser } from './decorators'
 
@@ -28,10 +28,21 @@ export class AuthController {
   }
 
   @Post('register')
-  async register(@Body() dto: RegisterDto, @Res({ passthrough: true }) res: Response) {
-    const { refreshToken, ...rest } = await this.auth.register(dto.email, dto.password, dto.name)
+  register(@Body() dto: RegisterDto) {
+    // Returns { needsVerification: true, email } — no tokens until the email code is verified.
+    return this.auth.register(dto.email, dto.password, dto.name)
+  }
+
+  @Post('verify')
+  async verify(@Body() dto: VerifyDto, @Res({ passthrough: true }) res: Response) {
+    const { refreshToken, ...rest } = await this.auth.verifyEmail(dto.email, dto.code)
     this.setRefreshCookie(res, refreshToken)
     return { ...rest, refreshToken }
+  }
+
+  @Post('resend')
+  resend(@Body() dto: ResendDto) {
+    return this.auth.resendVerification(dto.email)
   }
 
   @Post('login')

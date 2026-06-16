@@ -177,6 +177,12 @@ export const STR: Dict = {
   needAccount: { id: 'Belum punya akun? Daftar', en: 'No account? Sign up' },
   haveAccount: { id: 'Sudah punya akun? Masuk', en: 'Have an account? Sign in' },
   authFailed: { id: 'Gagal. Periksa email/kata sandi.', en: 'Failed. Check email/password.' },
+  verifyEmail: { id: 'Verifikasi Email', en: 'Verify Email' },
+  verifyHint: { id: 'Masukkan 6 digit kode yang dikirim ke', en: 'Enter the 6-digit code sent to' },
+  codeLabel: { id: 'Kode verifikasi', en: 'Verification code' },
+  codeSent: { id: 'Kode verifikasi telah dikirim ke email kamu.', en: 'A verification code has been sent to your email.' },
+  codeInvalid: { id: 'Kode salah atau kedaluwarsa.', en: 'Invalid or expired code.' },
+  resendCode: { id: 'Kirim ulang kode', en: 'Resend code' },
   syncNote: {
     id: 'Masuk untuk menyimpan preset & riwayat di cloud (sinkron ke semua perangkat).',
     en: 'Sign in to save presets & history in the cloud (synced across devices).',
