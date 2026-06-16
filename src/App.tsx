@@ -59,13 +59,13 @@ function TabContent({ tab, store }: { tab: string; store: BrewStore }) {
 }
 
 /**
- * A dashboard column. The last panel grows to fill leftover height so every
- * column reaches the bottom flush (no ragged empty space); it scrolls
- * internally only if its own content overflows on short screens.
+ * A dashboard column. Every panel shares the column height equally so panel
+ * edges align across columns; each scrolls internally only if its own content
+ * overflows on short screens.
  */
 function Col({ children }: { children: ReactNode }) {
   return (
-    <div className="flex min-h-0 flex-col gap-3 [&>section:last-child]:min-h-0 [&>section:last-child]:flex-1 [&>section:last-child]:overflow-y-auto">
+    <div className="flex min-h-0 flex-col gap-3 [&>section]:min-h-0 [&>section]:flex-1 [&>section]:overflow-y-auto">
       {children}
     </div>
   )

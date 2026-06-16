@@ -2,8 +2,38 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Dark theme (default). RGB triplets so Tailwind alpha modifiers work. */
 :root {
+  --c-50: 246 245 244;
+  --c-100: 231 228 226;
+  --c-200: 203 199 196;
+  --c-300: 157 151 148;
+  --c-400: 111 106 103;
+  --c-500: 83 79 77;
+  --c-600: 61 58 57;
+  --c-700: 47 44 43;
+  --c-800: 39 36 35;
+  --c-900: 28 26 25;
+  --c-950: 20 19 18;
+  --crema: 243 239 236;
   color-scheme: dark;
+}
+
+/* Light theme: mirror the neutral scale (surfaces light, text dark). */
+html.light {
+  --c-50: 20 19 18;
+  --c-100: 28 26 25;
+  --c-200: 39 36 35;
+  --c-300: 90 84 81;
+  --c-400: 120 113 109;
+  --c-500: 140 133 128;
+  --c-600: 168 161 156;
+  --c-700: 198 192 187;
+  --c-800: 221 215 210;
+  --c-900: 237 233 229;
+  --c-950: 248 245 242;
+  --crema: 31 28 26;
+  color-scheme: light;
 }
 
 html,
@@ -20,6 +50,14 @@ body {
     #171717;
   color: #ece8e5;
   -webkit-font-smoothing: antialiased;
+}
+
+html.light body {
+  background:
+    radial-gradient(1200px 600px at 82% -12%, rgba(232, 75, 61, 0.1), transparent 60%),
+    radial-gradient(900px 520px at -10% 112%, rgba(6, 148, 148, 0.1), transparent 55%),
+    #faf7f4;
+  color: #2b2422;
 }
 
 @layer components {

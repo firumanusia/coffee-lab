@@ -1,8 +1,11 @@
 import type { ReactNode } from 'react'
 import { useT } from '../i18n/LanguageContext'
+import { useTheme } from '../i18n/ThemeContext'
+import { Icons } from './icons'
 
 export function Header({ compact = false, actions }: { compact?: boolean; actions?: ReactNode }) {
   const { t, lang, setLang } = useT()
+  const { theme, toggle } = useTheme()
   return (
     <header
       className={`flex flex-col items-center gap-3 sm:flex-row sm:items-center sm:justify-between ${compact ? 'mb-3' : 'mb-6'}`}
@@ -19,6 +22,13 @@ export function Header({ compact = false, actions }: { compact?: boolean; action
       </div>
       <div className="flex items-center gap-2">
         {actions}
+        <button
+          onClick={toggle}
+          aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+          className="grid h-8 w-8 place-items-center rounded-lg border border-coffee-800 text-coffee-200 transition hover:border-brand-teal hover:text-crema"
+        >
+          {theme === 'dark' ? <Icons.sun size={16} /> : <Icons.moon size={16} />}
+        </button>
         <div className="inline-flex overflow-hidden rounded-lg border border-coffee-800 text-sm">
         {(['id', 'en'] as const).map((l) => (
           <button

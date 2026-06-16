@@ -9,6 +9,8 @@ import {
   Timer,
   Star,
   BookOpen,
+  Sun,
+  Moon,
   type LucideIcon,
 } from 'lucide-react'
 
@@ -27,6 +29,8 @@ export const Icons = {
   presets: Star,
   log: BookOpen,
   flask: FlaskConical,
+  sun: Sun,
+  moon: Moon,
 } satisfies Record<string, LucideIcon>
 
 export type { LucideIcon }
