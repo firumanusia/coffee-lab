@@ -100,6 +100,10 @@ export const STR: Dict = {
   ey: { id: 'Extraction Yield', en: 'Extraction Yield' },
   predicted: { id: 'Prediksi', en: 'Predicted' },
   measured: { id: 'Terukur', en: 'Measured' },
+  estimateNote: {
+    id: '⚠︎ Angka prediksi masih estimasi sementara — menunggu kalibrasi dari pendekar. Pakai TDS terukur untuk hasil akurat.',
+    en: '⚠︎ Predicted values are provisional estimates — pending expert calibration. Use measured TDS for accurate results.',
+  },
   measuredTds: { id: 'TDS terukur (refraktometer)', en: 'Measured TDS (refractometer)' },
   measuredYield: { id: 'Yield terukur', en: 'Measured yield' },
   useMeasured: { id: 'Pakai data terukur', en: 'Use measured data' },

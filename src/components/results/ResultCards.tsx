@@ -13,6 +13,11 @@ export function ResultCards({ store }: { store: BrewStore }) {
 
   return (
     <Panel title={t('secResults')} icon={<Icons.results size={16} />}>
+      {p.source !== 'measured' && (
+        <p className="mb-2 rounded-lg border border-amber-500/30 bg-amber-500/10 px-3 py-1.5 text-[11px] text-amber-200">
+          {t('estimateNote')}
+        </p>
+      )}
       <div className="grid grid-cols-3 gap-2 text-center">
         <Metric label={t('yield')} value={`${Math.round(p.beverageMass)}`} unit="g" />
         <Metric label={t('tds')} value={p.tds.toFixed(2)} unit="%" highlight={p.source === 'measured'} />
