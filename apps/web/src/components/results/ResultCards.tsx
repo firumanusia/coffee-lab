@@ -15,7 +15,7 @@ export function ResultCards({ store }: { store: BrewStore }) {
   return (
     <Panel title={t('secResults')} icon={<Icons.results size={16} />}>
       {p.source !== 'measured' && (
-        <p className="mb-2 rounded-lg border border-amber-500/30 bg-amber-500/10 px-3 py-1.5 text-[11px] text-amber-200">
+        <p className="mb-2 rounded-lg border border-amber-500/30 bg-amber-500/10 px-3 py-1.5 text-[11px] text-amber-300 [.light_&]:text-amber-800">
           {t('estimateNote')}
         </p>
       )}

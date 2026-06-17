@@ -4,7 +4,7 @@ import { useGear } from '../catalog/CatalogContext'
 import { useT } from '../i18n/LanguageContext'
 import type { BrewStore } from '../store/useBrewStore'
 
-const zoneColor = (ok: boolean) => (ok ? 'text-brand-tealLight' : 'text-amber-300')
+const zoneColor = (ok: boolean) => (ok ? 'text-brand-tealLight' : 'text-amber-400 [.light_&]:text-amber-700')
 
 export function MobileResultBar({ store, onOpen, active }: { store: BrewStore; onOpen: () => void; active: boolean }) {
   const { t } = useT()
