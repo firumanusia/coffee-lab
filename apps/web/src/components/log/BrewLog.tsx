@@ -20,7 +20,7 @@ export function BrewLog({ store }: { store: BrewStore }) {
 
   const beanLabel = (id: string) => {
     const b = beans.find((x) => x.id === id)
-    return b ? `${b.origin} ${b.region} ${b.variety}` : id
+    return b ? `${b.variety} · ${b.origin} ${b.region}` : id
   }
   const defaultName = (recipeId: string) => recipes.find((r) => r.id === recipeId)?.name ?? 'Brew'
 

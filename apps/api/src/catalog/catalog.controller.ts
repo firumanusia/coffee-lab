@@ -33,7 +33,7 @@ export class CatalogController {
   @Get('recipes/:id') recipe(@Param('id') id: string) { return this.one(this.prisma.recipe.findUnique({ where: { id } })) }
 
   // Processes
-  @Get('processes') processes() { return this.prisma.process.findMany({ orderBy: { nameEn: 'asc' } }) }
+  @Get('processes') processes() { return this.prisma.process.findMany({ orderBy: { name: 'asc' } }) }
   @Get('processes/:id') process(@Param('id') id: string) { return this.one(this.prisma.process.findUnique({ where: { id } })) }
 
   private async one<T>(p: Promise<T | null>): Promise<T> {

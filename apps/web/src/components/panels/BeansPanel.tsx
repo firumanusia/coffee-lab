@@ -1,6 +1,5 @@
 import { useMemo } from 'react'
 import { useCatalog } from '../../catalog/CatalogContext'
-import { processInfo } from '../../data/processInfo'
 import { ROAST_BANDS, roastFromAgtron } from '../../data/roast'
 import { useLocalized, useT } from '../../i18n/LanguageContext'
 import type { BrewStore } from '../../store/useBrewStore'
@@ -13,61 +12,51 @@ export function BeansPanel({ store }: { store: BrewStore }) {
   const { t, lang } = useT()
   const L = useLocalized()
   const { config, update } = store
-  const { beans } = useCatalog()
+  const { beans, processes } = useCatalog()
 
   const bean = beans.find((b) => b.id === config.beanId) ?? beans[0]
   const roast = roastFromAgtron(config.agtron)
-  const proc = processInfo(config.processId)
+  const proc = processes.find((p) => p.name === config.processId)
 
-  const origins = useMemo(() => uniq(beans.map((b) => b.origin)), [beans])
+  // Cascading selection: variety → country (origin) → region.
+  const varieties = useMemo(() => uniq(beans.map((b) => b.variety)).sort((a, b) => a.localeCompare(b)), [beans])
+  const origins = useMemo(() => uniq(beans.filter((b) => b.variety === bean.variety).map((b) => b.origin)), [beans, bean.variety])
   const regions = useMemo(
-    () => uniq(beans.filter((b) => b.origin === bean.origin).map((b) => b.region)),
-    [beans, bean.origin],
-  )
-  const varieties = useMemo(
-    () => beans.filter((b) => b.origin === bean.origin && b.region === bean.region),
-    [beans, bean.origin, bean.region],
+    () => beans.filter((b) => b.variety === bean.variety && b.origin === bean.origin),
+    [beans, bean.variety, bean.origin],
   )
 
-  const selectBean = (b: (typeof beans)[number]) =>
-    update({ beanId: b.id, processId: b.processes[0] ?? 'Washed', agtron: b.agtron })
-
+  const onVariety = (variety: string) => {
+    const b = beans.find((x) => x.variety === variety)
+    if (b) update({ beanId: b.id })
+  }
   const onOrigin = (origin: string) => {
-    const b = beans.find((x) => x.origin === origin)
-    if (b) selectBean(b)
+    const b = beans.find((x) => x.variety === bean.variety && x.origin === origin)
+    if (b) update({ beanId: b.id })
   }
-  const onRegion = (region: string) => {
-    const b = beans.find((x) => x.origin === bean.origin && x.region === region)
-    if (b) selectBean(b)
-  }
-  const onVariety = (id: string) => {
-    const b = beans.find((x) => x.id === id)
-    if (b) selectBean(b)
-  }
+  const onRegion = (id: string) => update({ beanId: id })
 
-  // reversed so the bar reads dark (low Agtron, left) → light (high Agtron, right),
-  // matching the slider direction.
   const gradientBands = [...ROAST_BANDS].reverse()
 
   return (
     <Panel title={t('secBeans')} icon={<Icons.beans size={16} />}>
       <Select
-        label={t('origin')}
-        value={bean.origin}
-        options={origins.map((o) => ({ value: o, label: o }))}
-        onChange={onOrigin}
-      />
-      <Select label={t('region')} value={bean.region} options={regions.map((r) => ({ value: r, label: r }))} onChange={onRegion} />
-      <Select
         label={`${t('variety')} (${bean.species})`}
-        value={bean.id}
-        options={varieties.map((b) => ({ value: b.id, label: `${b.variety} · ${b.processes.join('/')}` }))}
+        value={bean.variety}
+        options={varieties.map((v) => ({ value: v, label: v }))}
         onChange={onVariety}
+      />
+      <Select label={t('origin')} value={bean.origin} options={origins.map((o) => ({ value: o, label: o }))} onChange={onOrigin} />
+      <Select
+        label={t('region')}
+        value={bean.id}
+        options={regions.map((b) => ({ value: b.id, label: b.region }))}
+        onChange={onRegion}
       />
       <Select
         label={t('process')}
         value={config.processId}
-        options={(bean.processes.length ? bean.processes : ['Washed']).map((p) => ({ value: p, label: p }))}
+        options={processes.map((p) => ({ value: p.name, label: p.name }))}
         onChange={(processId) => update({ processId })}
       />
 
@@ -96,12 +85,10 @@ export function BeansPanel({ store }: { store: BrewStore }) {
           <span>Sweetness: <b className="text-crema">{bean.sweetness}</b></span>
         </div>
         <div className="mb-1 text-coffee-300">
-          {t('elevation')}: <b className="text-crema">{bean.elevation} mdpl</b> · {t('roastIdeal')}: <b className="text-crema">{bean.roastIdeal}</b>
+          {t('category')}: <b className="text-crema">{bean.category || '—'}</b> · {t('cupPotential')}: <b className="text-crema">{bean.cupPotential || '—'}</b>
         </div>
-        <p className="text-coffee-200">
-          <b className="text-crema">{bean.aroma}</b> — {bean.notes}
-        </p>
-        <p className="mt-1 text-coffee-400">{L(proc.flavor)}</p>
+        {bean.notes && <p className="text-coffee-200">{bean.notes}</p>}
+        {proc && <p className="mt-1 text-coffee-400">{proc.flavor}</p>}
       </div>
     </Panel>
   )

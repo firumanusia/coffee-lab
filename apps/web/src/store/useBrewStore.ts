@@ -1,5 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { RECIPES, type Recipe } from '../data/recipes'
+import { BEANS } from '../data/generated/beans'
+import { PROCESSES } from '../data/generated/processes'
 import { suggestTemp } from '../data/water'
 import { api } from '../lib/api'
 import { useAuth } from '../auth/AuthContext'
@@ -12,8 +14,8 @@ export function configFromRecipe(r: Recipe): BrewConfig {
     waterId: 'aqua',
     grinderId: 'comandante-c40-mk4',
     micron: 650,
-    beanId: 'ethiopia-yirgacheffe-heirloom-13',
-    processId: 'Washed',
+    beanId: BEANS[0]?.id ?? '',
+    processId: PROCESSES[0]?.name ?? 'Washed (Full Wash)',
     agtron: r.agtron,
     dripperId: 'hario-v60-01',
     filterId: 'hario-v60-tabbed-jepang',

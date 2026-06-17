@@ -1,50 +1,98 @@
 [
   {
-    "id": "anaerobic",
-    "nameId": "Anaerobic",
-    "nameEn": "Anaerobic",
-    "extraction": 1.08,
-    "flavorId": "Intens, boozy, aromatik.",
-    "flavorEn": "Intense, boozy, aromatic."
+    "id": "washed-full-wash",
+    "name": "Washed (Full Wash)",
+    "description": "Kulit dan daging buah dikupas, lendir difermentasi dalam bak air hingga luruh, lalu dijemur bersih.",
+    "flavor": "Sangat bersih (clean), asiditas cerah dan tajam, body ringan, notes floral atau citrus."
   },
   {
-    "id": "honey",
-    "nameId": "Honey",
-    "nameEn": "Honey",
-    "extraction": 1.02,
-    "flavorId": "Manis seimbang, body sedang.",
-    "flavorEn": "Balanced sweetness, medium body."
+    "id": "natural-dry-process",
+    "name": "Natural (Dry Process)",
+    "description": "Ceri kopi utuh dijemur langsung di bawah sinar matahari hingga kering seperti kismis, baru dikupas.",
+    "flavor": "Body tebal, rasa buah-buahan (fruity) yang pekat, tingkat kemanisan tinggi."
   },
   {
-    "id": "natural",
-    "nameId": "Natural",
-    "nameEn": "Natural",
-    "extraction": 1.04,
-    "flavorId": "Buah matang, body tebal, manis fermentatif.",
-    "flavorEn": "Ripe fruit, heavy body, fermented sweetness."
+    "id": "honey-pulped-natural",
+    "name": "Honey (Pulped Natural)",
+    "description": "Kulit luar dikupas, tetapi biji dijemur bersama sisa lendir (mucilage) yang masih menempel.",
+    "flavor": "Kemanisan menyerupai madu atau karamel, keseimbangan yang baik antara body dan asiditas."
   },
   {
-    "id": "pulped-natural",
-    "nameId": "Pulped Natural",
-    "nameEn": "Pulped Natural",
-    "extraction": 1.02,
-    "flavorId": "Manis, body sedang–tebal.",
-    "flavorEn": "Sweet, medium–full body."
+    "id": "anaerobic-fermentation",
+    "name": "Anaerobic Fermentation",
+    "description": "Kopi difermentasi di tangki kedap udara. CO2 dari kopi perlahan mendorong oksigen keluar melalui katup.",
+    "flavor": "Rasa buah tropis intens, winey (mirip anggur), kayu manis, body creamy."
   },
   {
-    "id": "washed",
-    "nameId": "Washed",
-    "nameEn": "Washed",
-    "extraction": 1,
-    "flavorId": "Bersih, clarity tinggi, asiditas cerah.",
-    "flavorEn": "Clean, high clarity, bright acidity."
+    "id": "carbonic-maceration-cm",
+    "name": "Carbonic Maceration (CM)",
+    "description": "Ceri kopi utuh di tangki tertutup disuntik gas CO2 untuk secara aktif membuang oksigen keluar.",
+    "flavor": "Rasa kompleks dan tajam, memunculkan aroma bubblegum, persik, stroberi, dan floral."
   },
   {
-    "id": "wet-hulled",
-    "nameId": "Wet Hulled",
-    "nameEn": "Wet Hulled",
-    "extraction": 1.05,
-    "flavorId": "Earthy, herbal, body sangat tebal.",
-    "flavorEn": "Earthy, herbal, very full body."
+    "id": "thermal-shock",
+    "name": "Thermal Shock",
+    "description": "Kopi dicuci dengan air bersuhu ekstrem secara bergantian (panas lalu langsung dingin) setelah fermentasi.",
+    "flavor": "\"Mengunci\" aroma; sangat wangi, rasa buah yang juicy, dan clarity (kejernihan) sangat tinggi."
+  },
+  {
+    "id": "co-fermentation-infused",
+    "name": "Co-Fermentation (Infused)",
+    "description": "Bahan luar (buah persik, stroberi, rempah, dll.) ditambahkan ke dalam tangki saat fermentasi kopi.",
+    "flavor": "Profil rasa langsung menyerupai bahan tambahan (misal: rasa stroberi atau peach tea yang kuat)."
+  },
+  {
+    "id": "lactic-acetic",
+    "name": "Lactic / Acetic",
+    "description": "Fermentasi dengan kendali suhu dan pH ketat untuk merangsang dominasi Bakteri Asam Laktat atau Asetat.",
+    "flavor": "Lactic: Tekstur milky/silky mirip yogurt. Acetic: Asiditas kompleks yang wine-like."
+  },
+  {
+    "id": "koji-fermentation",
+    "name": "Koji Fermentation",
+    "description": "Penaburan spora jamur Aspergillus oryzae (Koji) pada ceri kopi untuk memecah pati menjadi gula.",
+    "flavor": "Kemanisan yang luar biasa tebal, body sangat bertekstur, umami."
+  },
+  {
+    "id": "cultured-yeast",
+    "name": "Cultured Yeast",
+    "description": "Ragi komersial spesifik (seperti ragi wine atau sampanye) disuntikkan ke dalam tangki fermentasi.",
+    "flavor": "Ekstraksi sangat konsisten, bersih, menonjolkan karakter floral atau buah secara presisi."
+  },
+  {
+    "id": "anoxic-fermentation",
+    "name": "Anoxic Fermentation",
+    "description": "Fermentasi dengan kondisi vakum atau flushing gas Nitrogen sehingga nol oksigen sejak detik pertama.",
+    "flavor": "Sangat bersih (ultra-clean), asiditas buah tajam tanpa cacat rasa boozy (alkohol/tuak)."
+  },
+  {
+    "id": "hermetic-sealed-natural",
+    "name": "Hermetic Sealed Natural",
+    "description": "Ceri utuh dimasukkan ke kantong hermetis di tengah fase penjemuran untuk fermentasi mikro yang stabil.",
+    "flavor": "Sweetness sepekat selai, body sirup, menonjolkan profil buah gelap (dark fruits) dan karamel."
+  },
+  {
+    "id": "mossto-lixiviate",
+    "name": "Mossto / Lixiviate",
+    "description": "Cairan Mossto (jus kaya ragi dari fermentasi kopi sebelumnya) disuntikkan sebagai starter pada batch baru.",
+    "flavor": "Memperkuat karakter genetik ganda; luar biasa juicy, manis, kompleksitas meledak."
+  },
+  {
+    "id": "cryo-maceration",
+    "name": "Cryo-Maceration",
+    "description": "Ceri kopi dibekukan di bawah nol derajat untuk memecah dinding sel, lalu dicairkan dan difermentasi.",
+    "flavor": "Kemanisan seperti permen (candy-like), creamy, aroma beri merah yang sangat pekat."
+  },
+  {
+    "id": "double-multi-stage",
+    "name": "Double / Multi-Stage",
+    "description": "Kopi melewati beberapa tahapan fermentasi berbeda (misal: anaerobik utuh, lalu aerobik setelah dikupas).",
+    "flavor": "Rasa sangat berlapis (layered complexity), menggabungkan body tebal dengan kejernihan maksimal."
+  },
+  {
+    "id": "ozone-uv-sterilization",
+    "name": "Ozone / UV Sterilization",
+    "description": "Ceri disterilkan dengan air ozon atau sinar UV sebelum diberi ragi laboratorium untuk membunuh bakteri liar.",
+    "flavor": "Rasa yang benar-benar murni, tanpa off-flavor (rasa tanah/kayu), murni karakter genetik ragi dan kopi."
   }
 ]

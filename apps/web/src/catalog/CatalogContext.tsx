@@ -5,6 +5,7 @@ import { BEANS, type Bean } from '../data/generated/beans'
 import { DRIPPERS, type Dripper } from '../data/generated/drippers'
 import { FILTERS, type PaperFilter } from '../data/generated/filters'
 import type { Grinder } from '../data/generated/grinders'
+import { PROCESSES, type Process } from '../data/generated/processes'
 import { RECIPES, type Recipe } from '../data/recipes'
 
 export interface Catalog {
@@ -14,6 +15,7 @@ export interface Catalog {
   drippers: Dripper[]
   filters: PaperFilter[]
   recipes: Recipe[]
+  processes: Process[]
   ready: boolean
 }
 
@@ -26,6 +28,7 @@ const FALLBACK: Catalog = {
   drippers: DRIPPERS,
   filters: FILTERS,
   recipes: RECIPES,
+  processes: PROCESSES,
   ready: false,
 }
 
@@ -40,13 +43,14 @@ export function CatalogProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     let alive = true
     ;(async () => {
-      const [w, b, g, d, f, r] = await Promise.allSettled([
+      const [w, b, g, d, f, r, p] = await Promise.allSettled([
         api.get<Water[]>('/waters'),
         api.get<Bean[]>('/beans'),
         api.get<Grinder[]>('/grinders'),
         api.get<Dripper[]>('/drippers'),
         api.get<PaperFilter[]>('/filters'),
         api.get<Recipe[]>('/recipes'),
+        api.get<Process[]>('/processes'),
       ])
       if (!alive) return
       setCat({
@@ -56,6 +60,7 @@ export function CatalogProvider({ children }: { children: ReactNode }) {
         drippers: pick(d, FALLBACK.drippers),
         filters: pick(f, FALLBACK.filters),
         recipes: pick(r, FALLBACK.recipes),
+        processes: pick(p, FALLBACK.processes),
         ready: true,
       })
     })()

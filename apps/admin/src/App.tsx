@@ -62,23 +62,22 @@ const WaterForm = ({ create }: { create?: boolean }) => (
 const BeanList = () => (
   <List filters={search} perPage={25}>
     <Datagrid rowClick="edit">
-      <TextField source="origin" /><TextField source="region" /><TextField source="variety" />
-      <TextField source="roastIdeal" /><NumberField source="agtron" />
+      <TextField source="variety" /><TextField source="origin" label="Country" /><TextField source="region" />
+      <TextField source="category" /><TextField source="cupPotential" />
     </Datagrid>
   </List>
 )
 const BeanForm = ({ create }: { create?: boolean }) => (
   <SimpleForm>
     {create && <IdInput />}
-    <TextInput source="origin" validate={required()} />
-    <TextInput source="region" validate={required()} />
-    <TextInput source="variety" validate={required()} />
+    <TextInput source="variety" validate={required()} helperText="Varietas / Klon" />
+    <TextInput source="origin" validate={required()} label="Country (Negara)" />
+    <TextInput source="region" validate={required()} label="Region (Daerah/Origin)" />
     <TextInput source="species" defaultValue="Arabica" />
-    <TextInput source="elevation" />
-    <TextInput source="processes" format={csvFormat} parse={csvParse} helperText="comma-separated" />
+    <TextInput source="category" helperText="Kategori" />
+    <TextInput source="cupPotential" helperText="Cup potential, e.g. 85-90+" />
     <TextInput source="body" /><TextInput source="acidity" /><TextInput source="sweetness" />
-    <TextInput source="aroma" /><TextInput source="notes" fullWidth />
-    <TextInput source="roastIdeal" /><NumberInput source="agtron" defaultValue={63} />
+    <TextInput source="notes" fullWidth multiline helperText="Tasting notes" />
   </SimpleForm>
 )
 
@@ -169,16 +168,16 @@ const RecipeForm = ({ create }: { create?: boolean }) => (
 const ProcessList = () => (
   <List filters={search} perPage={25}>
     <Datagrid rowClick="edit">
-      <TextField source="nameEn" /><NumberField source="extraction" /><TextField source="flavorEn" />
+      <TextField source="name" /><TextField source="flavor" />
     </Datagrid>
   </List>
 )
 const ProcessForm = ({ create }: { create?: boolean }) => (
   <SimpleForm>
     {create && <IdInput />}
-    <TextInput source="nameId" validate={required()} /><TextInput source="nameEn" validate={required()} />
-    <NumberInput source="extraction" defaultValue={1} step={0.01} />
-    <TextInput source="flavorId" fullWidth /><TextInput source="flavorEn" fullWidth />
+    <TextInput source="name" validate={required()} helperText="Proses pasca panen" />
+    <TextInput source="description" fullWidth multiline helperText="Deskripsi singkat / cara kerja" />
+    <TextInput source="flavor" fullWidth multiline helperText="Dampak pada profil rasa" />
   </SimpleForm>
 )
 

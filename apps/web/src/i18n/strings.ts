@@ -60,6 +60,7 @@ export const STR: Dict = {
   flavorTendency: { id: 'Kecenderungan rasa', en: 'Flavor tendency' },
   elevation: { id: 'Elevasi', en: 'Elevation' },
   roastIdeal: { id: 'Roast ideal', en: 'Ideal roast' },
+  cupPotential: { id: 'Cup potential', en: 'Cup potential' },
 
   // dripper / filter
   dripperType: { id: 'Tipe', en: 'Type' },

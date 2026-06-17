@@ -54,22 +54,19 @@ model Water {
 }
 
 model Bean {
-  id         String   @id
-  origin     String
-  region     String
-  variety    String
-  species    String
-  elevation  String
-  processes  String[]
-  body       String
-  acidity    String
-  sweetness  String
-  aroma      String
-  notes      String
-  roastIdeal String
-  agtron     Int
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  id           String   @id
+  variety      String
+  origin       String
+  region       String
+  species      String
+  category     String
+  cupPotential String
+  body         String
+  acidity      String
+  sweetness    String
+  notes        String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 }
 
 model Dripper {
@@ -131,14 +128,12 @@ model Recipe {
 }
 
 model Process {
-  id         String   @id
-  nameId     String
-  nameEn     String
-  extraction Float
-  flavorId   String
-  flavorEn   String
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  id          String   @id
+  name        String
+  description String
+  flavor      String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
 
 // ---------- User data ----------

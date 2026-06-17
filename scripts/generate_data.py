@@ -63,42 +63,37 @@ def gen_water():
     write_json("waters.json", waters)
     return len(waters)
 
-# ---------------- BEANS (origin/region/variety/process) ----------------
-ROAST_AGTRON = {
-    "light": 85, "light–medium": 75, "light-medium": 75, "medium light": 75,
-    "medium": 63, "medium dark": 50, "medium-dark": 50, "dark": 38,
-}
-def roast_to_agtron(s):
-    key = s.strip().lower()
-    return ROAST_AGTRON.get(key, 63)
-
+# ---------------- BEANS (variety-first: variety > country > region) ----------------
 def gen_beans():
+    # Sheet cols: Varietas/Klon, Negara, Daerah/Origin, Spesies, Kategori,
+    # Cup Potential, Body, Acidity, Sweetness, Tasting Notes. Sorted by variety.
     beans = []
-    with open(os.path.join(RAW, "origin.csv"), encoding="utf-8") as f:
+    seen = set()
+    with open(os.path.join(RAW, "beans.csv"), encoding="utf-8") as f:
         r = csv.reader(f)
-        next(r)  # header
+        next(r)
         idx = 0
         for row in r:
             if not row or not row[0].strip():
                 continue
-            (origin, region, variety, species, elev, proc, body, acidity,
-             sweetness, aroma, notes, roast) = (row + [""] * 12)[:12]
-            processes = [p.strip() for p in re.split(r"[,/]", proc) if p.strip()]
-            bid = slug(origin, region, variety, str(idx))
+            (variety, origin, region, species, category, cup, body, acidity,
+             sweetness, notes) = (row + [""] * 10)[:10]
+            bid = slug(variety, origin, region)
+            if bid in seen:
+                bid = slug(variety, origin, region, str(idx))
+            seen.add(bid)
             beans.append({
-                "id": bid, "origin": origin.strip(), "region": region.strip(),
-                "variety": variety.strip(), "species": species.strip(),
-                "elevation": elev.strip(), "processes": processes,
+                "id": bid, "variety": variety.strip(), "origin": origin.strip(),
+                "region": region.strip(), "species": species.strip(),
+                "category": category.strip(), "cupPotential": cup.strip(),
                 "body": body.strip(), "acidity": acidity.strip(),
-                "sweetness": sweetness.strip(), "aroma": aroma.strip(),
-                "notes": notes.strip(), "roastIdeal": roast.strip(),
-                "agtron": roast_to_agtron(roast),
+                "sweetness": sweetness.strip(), "notes": notes.strip(),
             })
             idx += 1
-    out = header("Coffee beans: origin/region/variety/process + cup profile. Source: domain spreadsheet.")
-    out += ("export interface Bean { id: string; origin: string; region: string; variety: string;\n"
-            "  species: string; elevation: string; processes: string[]; body: string; acidity: string;\n"
-            "  sweetness: string; aroma: string; notes: string; roastIdeal: string; agtron: number }\n\n")
+    out = header("Coffee beans: variety > country > region + cup profile. Source: domain spreadsheet.")
+    out += ("export interface Bean { id: string; variety: string; origin: string; region: string;\n"
+            "  species: string; category: string; cupPotential: string; body: string; acidity: string;\n"
+            "  sweetness: string; notes: string }\n\n")
     out += "export const BEANS: Bean[] = [\n"
     for b in beans:
         out += "  " + js(b) + ",\n"
@@ -106,6 +101,33 @@ def gen_beans():
     write("beans.ts", out)
     write_json("beans.json", beans)
     return len(beans)
+
+# ---------------- PROCESSES (standalone post-harvest catalog) ----------------
+def gen_processes():
+    # Sheet cols: Proses pasca panen, Deskripsi Singkat / Cara Kerja, Dampak pada Profil Rasa.
+    items = []
+    seen = set()
+    with open(os.path.join(RAW, "processes.csv"), encoding="utf-8") as f:
+        r = csv.reader(f)
+        next(r)
+        for row in r:
+            if not row or not row[0].strip():
+                continue
+            name, desc, flavor = (row + [""] * 3)[:3]
+            pid = slug(name)
+            if pid in seen:
+                continue
+            seen.add(pid)
+            items.append({"id": pid, "name": name.strip(), "description": desc.strip(), "flavor": flavor.strip()})
+    out = header("Post-harvest processes (standalone). Source: domain spreadsheet.")
+    out += "export interface Process { id: string; name: string; description: string; flavor: string }\n\n"
+    out += "export const PROCESSES: Process[] = [\n"
+    for p in items:
+        out += "  " + js(p) + ",\n"
+    out += "]\n"
+    write("processes.ts", out)
+    write_json("processes.json", items)
+    return len(items)
 
 # ---------------- DRIPPERS ----------------
 def dripper_geo_flow(type_raw):
@@ -284,6 +306,7 @@ def write_json(name, data):
 if __name__ == "__main__":
     print("waters:", gen_water())
     print("beans:", gen_beans())
+    print("processes:", gen_processes())
     print("drippers:", gen_drippers())
     print("filters:", gen_filters())
     print("grinders:", gen_grinders())
