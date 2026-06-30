@@ -61,6 +61,8 @@ export const STR: Dict = {
   elevation: { id: 'Elevasi', en: 'Elevation' },
   roastIdeal: { id: 'Roast ideal', en: 'Ideal roast' },
   cupPotential: { id: 'Cup potential', en: 'Cup potential' },
+  craftedBy: { id: 'Dibuat oleh', en: 'Crafted by' },
+  supportKofi: { id: 'Dukung di Ko-fi', en: 'Support on Ko-fi' },
 
   // dripper / filter
   dripperType: { id: 'Tipe', en: 'Type' },

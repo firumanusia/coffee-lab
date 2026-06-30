@@ -3,6 +3,7 @@ import { Header } from './components/Header'
 import { Modal } from './components/Modal'
 import { BottomNav, type TabDef } from './components/BottomNav'
 import { MobileResultBar } from './components/MobileResultBar'
+import { Footer } from './components/Footer'
 import { Icons } from './components/icons'
 import { useT } from './i18n/LanguageContext'
 import { BeansPanel } from './components/panels/BeansPanel'
@@ -107,6 +108,10 @@ function DesktopDashboard({ store }: { store: BrewStore }) {
         </Col>
       </main>
 
+      <div className="pt-2">
+        <Footer />
+      </div>
+
       {modal === 'presets' && (
         <Modal label={t('secPresets')} onClose={() => setModal(null)}>
           <PresetBar store={store} />
@@ -135,11 +140,9 @@ export default function App() {
         <TabContent tab={tab} store={store} />
       </div>
 
-      <footer className="mt-8 pb-28 text-center text-[11px] text-coffee-500">
-        <span className="font-semibold text-brand-red">MENOOWEL</span>{' '}
-        <span className="text-brand-teal">BrewLab Studio</span> · prediksi adalah estimasi heuristik —
-        gunakan TDS terukur untuk hasil akurat · data: SCA, Honest Coffee Guide, Third Wave Water
-      </footer>
+      <div className="mt-8 pb-28">
+        <Footer />
+      </div>
 
       <div className="fixed inset-x-0 bottom-0 z-40 mx-auto max-w-6xl">
         <MobileResultBar store={store} active={tab === 'brew'} onOpen={() => setTab('brew')} />
