@@ -1,5 +1,6 @@
 // Renders a branded, shareable "brew recipe card" PNG from the current settings.
-// Pure Canvas 2D — no dependencies. Portrait 1080x1350 (great for IG/WhatsApp/X).
+// Pure Canvas 2D — no dependencies. Portrait 1080x1500 (great for IG/WhatsApp/X).
+// Layout/spacing tuned to a consistent margin grid (designed + verified visually).
 
 export interface ShareData {
   variety: string
@@ -29,8 +30,9 @@ export interface ShareData {
 }
 
 const W = 1080
-const H = 1350
-const PAD = 72
+const H = 1500
+const M = 80
+const CW = W - 2 * M
 
 const C = {
   bg: '#161311',
@@ -39,25 +41,20 @@ const C = {
   teal: '#0bb3b3',
   text: '#f3efec',
   muted: '#a39c97',
-  faint: '#6b6460',
-  line: 'rgba(255,255,255,0.08)',
-  tile: 'rgba(255,255,255,0.04)',
+  faint: '#78726d',
+  line: 'rgba(255,255,255,0.11)',
+  hair: 'rgba(255,255,255,0.06)',
+  card: 'rgba(255,255,255,0.04)',
+  cardEdge: 'rgba(255,255,255,0.09)',
+  tile: 'rgba(255,255,255,0.05)',
 }
 
-function roundRect(ctx: CanvasRenderingContext2D, x: number, y: number, w: number, h: number, r: number) {
-  ctx.beginPath()
-  ctx.roundRect(x, y, w, h, r)
-}
-
-function fmtTime(s: number) {
-  const m = Math.floor(s / 60)
-  return `${m}:${String(Math.floor(s % 60)).padStart(2, '0')}`
-}
+const fmtTime = (s: number) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, '0')}`
+const cap = (s: string) => (s ? s[0].toUpperCase() + s.slice(1) : s)
 
 export async function drawShareCard(d: ShareData): Promise<{ blob: Blob; url: string }> {
-  // make sure the webfont is ready so the canvas uses Inter
   try {
-    await (document as any).fonts?.ready
+    await (document as Document & { fonts?: { ready: Promise<unknown> } }).fonts?.ready
   } catch {
     /* ignore */
   }
@@ -68,195 +65,165 @@ export async function drawShareCard(d: ShareData): Promise<{ blob: Blob; url: st
   const ctx = canvas.getContext('2d')!
   const font = (size: number, weight = 400) => `${weight} ${size}px Inter, system-ui, sans-serif`
 
+  type Align = CanvasTextAlign
+  type Base = CanvasTextBaseline
+  const text = (s: string, x: number, y: number, f: string, color: string, align: Align = 'left', base: Base = 'alphabetic', maxw?: number) => {
+    ctx.font = f
+    ctx.fillStyle = color
+    ctx.textAlign = align
+    ctx.textBaseline = base
+    ctx.fillText(s, x, y, maxw)
+  }
+  const line = (x0: number, y0: number, x1: number, y1: number, color: string, w = 1) => {
+    ctx.strokeStyle = color
+    ctx.lineWidth = w
+    ctx.beginPath()
+    ctx.moveTo(x0, y0)
+    ctx.lineTo(x1, y1)
+    ctx.stroke()
+  }
+  const panel = (x: number, y: number, w: number, h: number, r: number, fill: string, edge?: string) => {
+    ctx.beginPath()
+    ctx.roundRect(x, y, w, h, r)
+    ctx.fillStyle = fill
+    ctx.fill()
+    if (edge) {
+      ctx.strokeStyle = edge
+      ctx.lineWidth = 2
+      ctx.beginPath()
+      ctx.roundRect(x, y, w, h, r)
+      ctx.stroke()
+    }
+  }
+
   // ---- background + brand glows ----
   ctx.fillStyle = C.bg
   ctx.fillRect(0, 0, W, H)
-  const g1 = ctx.createRadialGradient(W - 80, 60, 0, W - 80, 60, 620)
-  g1.addColorStop(0, 'rgba(232,75,61,0.28)')
-  g1.addColorStop(1, 'rgba(232,75,61,0)')
-  ctx.fillStyle = g1
-  ctx.fillRect(0, 0, W, H)
-  const g2 = ctx.createRadialGradient(40, H - 60, 0, 40, H - 60, 640)
-  g2.addColorStop(0, 'rgba(6,148,148,0.26)')
-  g2.addColorStop(1, 'rgba(6,148,148,0)')
-  ctx.fillStyle = g2
-  ctx.fillRect(0, 0, W, H)
+  const glow = (cx: number, cy: number, r: number, c0: string) => {
+    const g = ctx.createRadialGradient(cx, cy, 0, cx, cy, r)
+    g.addColorStop(0, c0)
+    g.addColorStop(1, c0.replace(/[\d.]+\)$/, '0)'))
+    ctx.fillStyle = g
+    ctx.fillRect(0, 0, W, H)
+  }
+  glow(W - 40, 30, 620, 'rgba(232,75,61,0.30)')
+  glow(20, H - 30, 660, 'rgba(6,148,148,0.26)')
 
-  ctx.textBaseline = 'alphabetic'
+  let y = M
 
   // ---- header ----
-  let y = PAD + 40
-  ctx.textAlign = 'left'
+  text('MENOOWEL', M, y, font(40, 800), C.red, 'left', 'top')
   ctx.font = font(40, 800)
-  ctx.fillStyle = C.red
-  ctx.fillText('MENOOWEL', PAD, y)
   const mw = ctx.measureText('MENOOWEL').width
-  ctx.font = font(20, 700)
-  ctx.fillStyle = C.teal
-  ctx.fillText('BrewLab Studio', PAD + mw + 16, y - 2)
-  ctx.textAlign = 'right'
-  ctx.font = font(24, 700)
-  ctx.fillStyle = C.text
-  ctx.fillText('menoowel.com', W - PAD, y)
-
-  y += 30
-  ctx.strokeStyle = C.line
-  ctx.lineWidth = 2
-  ctx.beginPath()
-  ctx.moveTo(PAD, y)
-  ctx.lineTo(W - PAD, y)
-  ctx.stroke()
-
-  // ---- bean headline ----
-  y += 76
-  ctx.textAlign = 'left'
-  ctx.font = font(18, 700)
-  ctx.fillStyle = C.faint
-  ctx.fillText('BREW RECIPE', PAD, y)
-  y += 58
-  ctx.font = font(56, 800)
-  ctx.fillStyle = C.text
-  ctx.fillText(d.variety || 'Custom brew', PAD, y, W - PAD * 2)
-  y += 40
-  ctx.font = font(26, 500)
-  ctx.fillStyle = C.muted
-  const loc = [d.origin, d.region].filter(Boolean).join(' · ')
-  if (loc) ctx.fillText(loc, PAD, y, W - PAD * 2)
-  y += 36
-  ctx.font = font(22, 500)
-  ctx.fillStyle = C.teal
-  ctx.fillText([d.process, `${d.roastName} · Agtron ${d.agtron}`].filter(Boolean).join('  |  '), PAD, y, W - PAD * 2)
-
-  // ---- spec rows ----
+  text('BrewLab Studio', M + mw + 18, y + 12, font(20, 700), C.teal, 'left', 'top')
+  text('menoowel.com', W - M, y + 8, font(24, 700), C.text, 'right', 'top')
   y += 64
+  line(M, y, W - M, y, C.line, 2)
+  y += 48
+
+  // ---- hero ----
+  text('BREW RECIPE', M, y, font(18, 800), C.faint, 'left', 'top')
+  y += 44
+  text(d.variety || 'Custom brew', M, y, font(58, 800), C.text, 'left', 'top', CW)
+  y += 74
+  const loc = [d.origin, d.region].filter(Boolean).join('  ·  ')
+  text(loc || '—', M, y, font(27, 400), C.muted, 'left', 'top', CW)
+  y += 40
+  const pr = [d.process, `${d.roastName} · Agtron ${d.agtron}`].filter(Boolean).join('    •    ')
+  text(pr, M, y, font(22, 700), C.teal, 'left', 'top', CW)
+  y += 58
+
+  // ---- spec card ----
   const rows: [string, string][] = [
-    ['Grinder', `${d.grinder}`],
+    ['Grinder', d.grinder],
     ['Grind', `${d.micron} µm${d.clicks ? ` · ${d.clicks}` : ''}`],
     ['Dripper', d.dripper],
     ['Filter', d.filter],
     ['Recipe', `${d.recipeName}${d.author && d.author !== '—' ? ` — ${d.author}` : ''}`],
   ]
-  ctx.font = font(24)
-  for (const [k, v] of rows) {
-    ctx.textAlign = 'left'
-    ctx.font = font(22, 600)
-    ctx.fillStyle = C.faint
-    ctx.fillText(k, PAD, y)
-    ctx.textAlign = 'right'
-    ctx.font = font(24, 600)
-    ctx.fillStyle = C.text
-    ctx.fillText(v, W - PAD, y, W - PAD * 2 - 180)
-    y += 30
-    ctx.strokeStyle = C.line
-    ctx.lineWidth = 1
-    ctx.beginPath()
-    ctx.moveTo(PAD, y)
-    ctx.lineTo(W - PAD, y)
-    ctx.stroke()
-    y += 28
-  }
-
-  // ---- dose / ratio / temp / water strip ----
-  y += 8
-  const strip = [
-    ['Dose', `${d.dose} g`],
-    ['Ratio', `1:${d.ratio}`],
-    ['Water', `${Math.round(d.totalWater)} g`],
-    ['Temp', `${d.tempC}°C`],
-  ]
-  const sw = (W - PAD * 2) / strip.length
-  strip.forEach(([k, v], i) => {
-    const cx = PAD + sw * i + sw / 2
-    ctx.textAlign = 'center'
-    ctx.font = font(34, 800)
-    ctx.fillStyle = C.text
-    ctx.fillText(v, cx, y)
-    ctx.font = font(18, 600)
-    ctx.fillStyle = C.faint
-    ctx.fillText(k.toUpperCase(), cx, y + 28)
+  const rowH = 68
+  const padIn = 28
+  const ch = padIn * 2 + rowH * rows.length
+  panel(M, y, CW, ch, 24, C.card, C.cardEdge)
+  let ry = y + padIn + rowH / 2
+  rows.forEach(([k, v], i) => {
+    text(k, M + 32, ry, font(23, 600), C.faint, 'left', 'middle')
+    text(v, W - M - 32, ry, font(24, 600), C.text, 'right', 'middle', CW - 320)
+    if (i < rows.length - 1) line(M + 32, ry + rowH / 2, W - M - 32, ry + rowH / 2, C.hair, 1)
+    ry += rowH
   })
-  y += 66
+  y += ch + 40
 
-  // ---- predicted result tiles ----
-  y += 18
-  const tiles = [
+  // ---- stat strip ----
+  const strip: [string, string][] = [
+    ['DOSE', `${d.dose} g`],
+    ['RATIO', `1:${d.ratio}`],
+    ['WATER', `${Math.round(d.totalWater)} g`],
+    ['TEMP', `${d.tempC}°C`],
+  ]
+  const sh = 120
+  panel(M, y, CW, sh, 24, C.card, C.cardEdge)
+  const sw = CW / strip.length
+  strip.forEach(([k, v], i) => {
+    const cx = M + sw * i + sw / 2
+    text(v, cx, y + 44, font(36, 800), C.text, 'center', 'middle')
+    text(k, cx, y + 84, font(18, 700), C.faint, 'center', 'middle')
+    if (i > 0) line(M + sw * i, y + 24, M + sw * i, y + sh - 24, C.hair, 1)
+  })
+  y += sh + 40
+
+  // ---- result tiles ----
+  const tiles: [string, string, string][] = [
     ['YIELD', `${Math.round(d.yieldG)}g`, C.text],
     ['TDS', `${d.tds.toFixed(2)}%`, C.red],
     ['EY', `${d.ey.toFixed(1)}%`, C.teal],
-  ] as const
-  const tw = (W - PAD * 2 - 32) / 3
-  const th = 170
+  ]
+  const gap = 20
+  const tw = (CW - gap * 2) / 3
+  const th = 180
   tiles.forEach(([k, v, col], i) => {
-    const x = PAD + (tw + 16) * i
-    ctx.fillStyle = C.tile
-    roundRect(ctx, x, y, tw, th, 22)
-    ctx.fill()
-    ctx.strokeStyle = C.line
-    ctx.lineWidth = 1.5
-    roundRect(ctx, x, y, tw, th, 22)
-    ctx.stroke()
-    ctx.textAlign = 'center'
-    ctx.font = font(54, 800)
-    ctx.fillStyle = col
-    ctx.fillText(v, x + tw / 2, y + 96)
-    ctx.font = font(20, 700)
-    ctx.fillStyle = C.muted
-    ctx.fillText(k, x + tw / 2, y + 132)
+    const x = M + (tw + gap) * i
+    panel(x, y, tw, th, 22, C.tile, C.cardEdge)
+    text(v, x + tw / 2, y + th / 2 - 12, font(56, 800), col, 'center', 'middle')
+    text(k, x + tw / 2, y + th - 40, font(20, 700), C.muted, 'center', 'middle')
   })
-  y += th + 18
-  ctx.textAlign = 'center'
-  ctx.font = font(22, 600)
-  ctx.fillStyle = C.muted
-  ctx.fillText(
-    `${d.measured ? 'Measured' : 'Predicted'} · ${d.strength} strength · ${d.extraction} extraction`,
+  y += th + 30
+  text(
+    `${d.measured ? 'Measured' : 'Predicted'}  ·  ${cap(d.strength)} strength  ·  ${cap(d.extraction)} extraction`,
     W / 2,
-    y + 6,
+    y,
+    font(22, 600),
+    C.muted,
+    'center',
+    'top',
   )
+  y += 52
 
-  // ---- pours mini timeline ----
+  // ---- pours timeline ----
   if (d.pours.length) {
-    y += 54
-    ctx.textAlign = 'left'
-    ctx.font = font(18, 700)
-    ctx.fillStyle = C.faint
-    ctx.fillText('POURS', PAD, y)
-    y += 26
+    y += 24
     const last = Math.max(...d.pours.map((p) => p.at), 1)
-    const lineY = y + 14
-    ctx.strokeStyle = C.line
-    ctx.lineWidth = 4
-    ctx.beginPath()
-    ctx.moveTo(PAD, lineY)
-    ctx.lineTo(W - PAD, lineY)
-    ctx.stroke()
+    const ly = y
+    line(M, ly, W - M, ly, C.line, 4)
     let cum = 0
     d.pours.forEach((p) => {
       cum += p.grams
-      const x = PAD + (p.at / last) * (W - PAD * 2)
+      const x = d.pours.length === 1 ? M + CW / 2 : M + (p.at / last) * CW
       ctx.fillStyle = C.red
       ctx.beginPath()
-      ctx.arc(x, lineY, 9, 0, Math.PI * 2)
+      ctx.arc(x, ly, 10, 0, Math.PI * 2)
       ctx.fill()
-      ctx.textAlign = 'center'
-      ctx.font = font(17, 700)
-      ctx.fillStyle = C.text
-      ctx.fillText(fmtTime(p.at), x, lineY - 22)
-      ctx.font = font(15, 500)
-      ctx.fillStyle = C.muted
-      ctx.fillText(`${Math.round(cum)}g`, x, lineY + 34)
+      text(fmtTime(p.at), x, ly - 26, font(18, 700), C.text, 'center', 'bottom')
+      text(`${Math.round(cum)}g`, x, ly + 18, font(16, 400), C.muted, 'center', 'top')
     })
-    y = lineY + 40
+    y = ly + 44
+  } else {
+    y += 24
   }
 
   // ---- footer CTA ----
-  const fy = H - 96
-  ctx.fillStyle = 'rgba(232,75,61,0.12)'
-  roundRect(ctx, PAD, fy - 40, W - PAD * 2, 78, 20)
-  ctx.fill()
-  ctx.textAlign = 'center'
-  ctx.font = font(28, 700)
-  ctx.fillStyle = C.text
-  ctx.fillText('Dial in your own pour-over  →  menoowel.com', W / 2, fy + 8)
+  panel(M, y, CW, 86, 20, 'rgba(232,75,61,0.12)', 'rgba(232,75,61,0.35)')
+  text('Dial in your own pour-over  →  menoowel.com', W / 2, y + 43, font(28, 700), C.text, 'center', 'middle')
 
   const blob: Blob = await new Promise((res) => canvas.toBlob((b) => res(b!), 'image/png'))
   return { blob, url: canvas.toDataURL('image/png') }
