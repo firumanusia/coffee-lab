@@ -28,6 +28,7 @@ const DELEGATES: Record<string, string> = {
   users: 'user',
   logs: 'brewLog',
   presets: 'preset',
+  feedback: 'feedback',
 }
 
 @ApiTags('admin')

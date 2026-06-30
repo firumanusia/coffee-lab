@@ -1,4 +1,5 @@
 import { useT } from '../i18n/LanguageContext'
+import { FeedbackButton } from './FeedbackButton'
 
 export function Footer() {
   const { t } = useT()
@@ -11,6 +12,8 @@ export function Footer() {
       <span>
         {t('craftedBy')} <b className="text-coffee-300">firumanusia</b> &amp; <b className="text-coffee-300">andrisoo</b>
       </span>
+      <span className="text-coffee-700">·</span>
+      <FeedbackButton />
       <span className="text-coffee-700">·</span>
       <a href="/donate" className="font-semibold text-brand-red transition hover:text-brand-deep">
         ☕ {t('supportKofi')}

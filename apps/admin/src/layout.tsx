@@ -38,6 +38,8 @@ export const MenuShell = () => (
     {CATALOG.map((name) => (
       <Menu.ResourceItem key={name} name={name} />
     ))}
+    {sub('Inbox')}
+    <Menu.ResourceItem name="feedback" />
     {sub('Access')}
     <Menu.ResourceItem name="users" />
     <Box sx={{ flex: 1 }} />
@@ -84,10 +86,18 @@ function Breadcrumb() {
 const AppBarShell = () => (
   <AppBar color="inherit" userMenu={<UserMenu><Logout /></UserMenu>}>
     <TitlePortal sx={{ display: 'none' }} />
-    <Breadcrumb />
-    <Box sx={{ flex: 1 }} />
+    <Box sx={{ flex: 1, minWidth: 0, overflow: 'hidden' }}>
+      <Breadcrumb />
+    </Box>
     <Tooltip title="View live site">
-      <IconButton size="small" href="https://menoowel.com" target="_blank" rel="noopener" color="inherit">
+      <IconButton
+        size="small"
+        href="https://menoowel.com"
+        target="_blank"
+        rel="noopener"
+        color="inherit"
+        sx={{ display: { xs: 'none', sm: 'inline-flex' } }}
+      >
         <OpenInNew fontSize="small" />
       </IconButton>
     </Tooltip>

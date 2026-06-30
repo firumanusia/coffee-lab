@@ -83,7 +83,7 @@ export const Dashboard = () => {
       </Typography>
       <Typography sx={{ color: 'text.secondary', mb: 3 }}>Manage MENOOWEL's brewing catalog & users.</Typography>
 
-      <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: 'repeat(2,1fr)', md: 'repeat(4,1fr)' }, gridAutoRows: '132px', gap: 2 }}>
+      <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: 'repeat(2,1fr)', md: 'repeat(4,1fr)' }, gridAutoRows: { xs: 'auto', md: 'minmax(132px, auto)' }, gap: 2 }}>
         {/* Hero: catalog overview bar chart (2x2) */}
         <Box sx={{ gridColumn: { md: 'span 2' }, gridRow: { md: 'span 2' } }}>
           <Tile delay={0}>

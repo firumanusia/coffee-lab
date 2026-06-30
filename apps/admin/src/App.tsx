@@ -14,8 +14,12 @@ import {
   BooleanInput,
   SelectInput,
   SearchInput,
+  DateField,
+  FunctionField,
+  useRecordContext,
   required,
 } from 'react-admin'
+import { Box, Typography } from '@mui/material'
 import { dataProvider } from './dataProvider'
 import { authProvider } from './authProvider'
 import { lightTheme, darkTheme } from './theme'
@@ -181,6 +185,31 @@ const ProcessForm = ({ create }: { create?: boolean }) => (
   </SimpleForm>
 )
 
+/* ---------------- Feedback ---------------- */
+const FeedbackPanel = () => {
+  const r = useRecordContext()
+  if (!r) return null
+  return (
+    <Box sx={{ p: 2 }}>
+      <Typography sx={{ whiteSpace: 'pre-wrap', mb: 1 }}>{r.message as string}</Typography>
+      <Typography variant="caption" color="text.secondary">
+        {r.email ? `From: ${r.email} · ` : ''}
+        {r.page ? `Page: ${r.page}` : ''}
+      </Typography>
+    </Box>
+  )
+}
+const FeedbackList = () => (
+  <List sort={{ field: 'createdAt', order: 'DESC' }} perPage={25}>
+    <Datagrid expand={<FeedbackPanel />} rowClick="expand">
+      <TextField source="type" />
+      <FunctionField label="Message" render={(r: any) => (r.message?.length > 70 ? `${r.message.slice(0, 70)}…` : r.message)} />
+      <TextField source="email" />
+      <DateField source="createdAt" showTime />
+    </Datagrid>
+  </List>
+)
+
 /* ---------------- Users ---------------- */
 const roles = [{ id: 'USER', name: 'USER' }, { id: 'ADMIN', name: 'ADMIN' }]
 const UserList = () => (
@@ -220,6 +249,7 @@ export default function App() {
       <Resource name="recipes" icon={ResourceIcons.recipes} list={RecipeList} edit={() => <Edit><RecipeForm /></Edit>} create={() => <Create><RecipeForm create /></Create>} />
       <Resource name="processes" icon={ResourceIcons.processes} list={ProcessList} edit={() => <Edit><ProcessForm /></Edit>} create={() => <Create><ProcessForm create /></Create>} />
       <Resource name="users" icon={ResourceIcons.users} list={UserList} edit={() => <Edit><UserEditForm /></Edit>} />
+      <Resource name="feedback" icon={ResourceIcons.feedback} list={FeedbackList} />
     </Admin>
   )
 }

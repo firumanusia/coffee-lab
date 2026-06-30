@@ -150,6 +150,18 @@ model Preset {
   @@index([userId])
 }
 
+model Feedback {
+  id        String   @id @default(cuid())
+  message   String
+  email     String?
+  type      String?
+  page      String?
+  userId    String?
+  createdAt DateTime @default(now())
+
+  @@index([createdAt])
+}
+
 model BrewLog {
   id        String   @id @default(cuid())
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)

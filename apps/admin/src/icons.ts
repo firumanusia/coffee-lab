@@ -7,8 +7,10 @@ import MenuBook from '@mui/icons-material/MenuBook'
 import Science from '@mui/icons-material/Science'
 import People from '@mui/icons-material/People'
 import SpaceDashboard from '@mui/icons-material/SpaceDashboard'
+import Feedback from '@mui/icons-material/Feedback'
 
 export const ResourceIcons = {
+  feedback: Feedback,
   beans: Grain,
   grinders: Blender,
   drippers: CoffeeMaker,

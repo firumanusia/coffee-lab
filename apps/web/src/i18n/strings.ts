@@ -71,6 +71,21 @@ export const STR: Dict = {
   },
   supportCta: { id: 'Traktir kopi di Ko-fi', en: 'Buy us a coffee on Ko-fi' },
   maybeLater: { id: 'Nanti saja', en: 'Maybe later' },
+  navFeedback: { id: 'Masukan', en: 'Feedback' },
+  feedbackTitle: { id: 'Kirim Masukan', en: 'Send Feedback' },
+  feedbackIntro: {
+    id: 'Punya saran, ide, atau menemukan bug? Kami senang mendengarnya.',
+    en: "Got a suggestion, idea, or found a bug? We'd love to hear it.",
+  },
+  feedbackType: { id: 'Jenis', en: 'Type' },
+  typeSuggestion: { id: 'Saran', en: 'Suggestion' },
+  typeBug: { id: 'Bug', en: 'Bug' },
+  typeOther: { id: 'Lainnya', en: 'Other' },
+  feedbackMsg: { id: 'Pesan', en: 'Message' },
+  feedbackMsgPh: { id: 'Tulis masukanmu di sini...', en: 'Write your feedback here...' },
+  feedbackEmail: { id: 'Email (opsional — agar bisa kami balas)', en: 'Email (optional — so we can reply)' },
+  feedbackSend: { id: 'Kirim', en: 'Send' },
+  feedbackThanks: { id: 'Terima kasih atas masukanmu! 🙏', en: 'Thanks for your feedback! 🙏' },
 
   // dripper / filter
   dripperType: { id: 'Tipe', en: 'Type' },
