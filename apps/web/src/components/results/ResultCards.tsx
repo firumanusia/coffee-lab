@@ -30,6 +30,8 @@ export function ResultCards({ store }: { store: BrewStore }) {
         <Metric label={t('flowRate')} value={`${p.flowRate}`} unit="g/s" small />
       </div>
 
+      <ShareButton store={store} />
+
       <div className="mt-3 rounded-xl border border-coffee-800/60 bg-coffee-900/30 p-3">
         <label className="flex cursor-pointer items-center gap-2 text-xs font-semibold text-crema">
           <input
@@ -79,8 +81,6 @@ export function ResultCards({ store }: { store: BrewStore }) {
           </li>
         ))}
       </ul>
-
-      <ShareButton store={store} />
     </Panel>
   )
 }

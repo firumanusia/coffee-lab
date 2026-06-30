@@ -9,7 +9,7 @@ import type { BrewStore } from '../store/useBrewStore'
 import { drawShareCard, type ShareData } from '../lib/shareCard'
 import { Modal } from './Modal'
 
-export function ShareButton({ store }: { store: BrewStore }) {
+export function ShareButton({ store, variant = 'block' }: { store: BrewStore; variant?: 'block' | 'icon' }) {
   const { t } = useT()
   const L = useLocalized()
   const { config } = store
@@ -100,9 +100,26 @@ export function ShareButton({ store }: { store: BrewStore }) {
 
   return (
     <>
-      <button className="btn-ghost mt-3 w-full justify-center text-sm" onClick={openModal}>
-        📸 {t('shareRecipe')}
-      </button>
+      {variant === 'icon' ? (
+        <button
+          onClick={(e) => {
+            e.stopPropagation()
+            openModal()
+          }}
+          title={t('shareRecipe')}
+          aria-label={t('shareRecipe')}
+          className="grid h-9 w-9 shrink-0 place-items-center rounded-lg border border-brand-teal/50 text-base text-brand-teal transition hover:bg-brand-teal/15"
+        >
+          📸
+        </button>
+      ) : (
+        <button
+          onClick={openModal}
+          className="mt-3 flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-brand-red to-brand-deep px-4 py-3 text-sm font-bold text-white shadow-lg shadow-brand-red/25 transition hover:brightness-110"
+        >
+          📸 {t('shareRecipe')}
+        </button>
+      )}
 
       {open && (
         <Modal label={t('shareCardTitle')} onClose={close}>

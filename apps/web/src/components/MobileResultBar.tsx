@@ -3,6 +3,7 @@ import { extractionOf, strengthOf } from '../model/sca'
 import { useGear } from '../catalog/CatalogContext'
 import { useT } from '../i18n/LanguageContext'
 import type { BrewStore } from '../store/useBrewStore'
+import { ShareButton } from './ShareButton'
 
 const zoneColor = (ok: boolean) => (ok ? 'text-brand-tealLight' : 'text-amber-400 [.light_&]:text-amber-700')
 
@@ -13,11 +14,9 @@ export function MobileResultBar({ store, onOpen, active }: { store: BrewStore; o
   const tdsOk = strengthOf(p.tds) === 'ideal'
 
   return (
-    <button
-      onClick={onOpen}
-      className="flex w-full items-center justify-between gap-3 border-t border-coffee-800 bg-coffee-900/95 px-4 py-1.5 text-left backdrop-blur"
-    >
-      <span className="flex gap-4 text-xs">
+    <div className="flex w-full items-center justify-between gap-3 border-t border-coffee-800 bg-coffee-900/95 px-4 py-1.5 backdrop-blur">
+      <button onClick={onOpen} className="flex flex-1 items-center gap-4 text-left">
+        <span className="flex gap-4 text-xs">
         <span className="flex flex-col leading-tight">
           <span className="text-[9px] uppercase tracking-wide text-coffee-400">{t('yield')}</span>
           <span className="font-bold text-crema">{Math.round(p.beverageMass)}g</span>
@@ -31,11 +30,13 @@ export function MobileResultBar({ store, onOpen, active }: { store: BrewStore; o
           <span className={`font-bold ${zoneColor(eyOk)}`}>{p.ey.toFixed(1)}%</span>
         </span>
       </span>
-      {!active && (
-        <span className="rounded-full border border-coffee-700 px-2 py-0.5 text-[10px] text-coffee-300">
-          {p.source === 'measured' ? t('measured') : t('predicted')} ↗
-        </span>
-      )}
-    </button>
+        {!active && (
+          <span className="rounded-full border border-coffee-700 px-2 py-0.5 text-[10px] text-coffee-300">
+            {p.source === 'measured' ? t('measured') : t('predicted')} ↗
+          </span>
+        )}
+      </button>
+      <ShareButton store={store} variant="icon" />
+    </div>
   )
 }
