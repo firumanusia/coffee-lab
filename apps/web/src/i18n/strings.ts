@@ -63,6 +63,14 @@ export const STR: Dict = {
   cupPotential: { id: 'Cup potential', en: 'Cup potential' },
   craftedBy: { id: 'Dibuat oleh', en: 'Crafted by' },
   supportKofi: { id: 'Dukung di Ko-fi', en: 'Support on Ko-fi' },
+  navSupport: { id: 'Dukung', en: 'Support' },
+  supportTitle: { id: 'Dukung MENOOWEL', en: 'Support MENOOWEL' },
+  supportIntro: {
+    id: 'MENOOWEL gratis & tanpa iklan. Kami kembangkan di waktu luang — tapi server, domain, dan kopinya tidak gratis. Kalau alat ini membantu seduhanmu jadi lebih enak, donasi sekecil apa pun sangat berarti untuk menjaganya tetap jalan & terus berkembang. Tanpa paksaan, ya. 🙏',
+    en: "MENOOWEL is free & ad-free. We build it in our spare time — but the servers, domain, and coffee aren't free. If it helped you brew a better cup, even a tiny tip keeps it running and improving. No pressure at all. 🙏",
+  },
+  supportCta: { id: 'Traktir kopi di Ko-fi', en: 'Buy us a coffee on Ko-fi' },
+  maybeLater: { id: 'Nanti saja', en: 'Maybe later' },
 
   // dripper / filter
   dripperType: { id: 'Tipe', en: 'Type' },

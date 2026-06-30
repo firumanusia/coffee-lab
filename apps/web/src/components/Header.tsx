@@ -2,6 +2,7 @@ import type { ReactNode } from 'react'
 import { useT } from '../i18n/LanguageContext'
 import { useTheme } from '../i18n/ThemeContext'
 import { AuthControls } from '../auth/AuthControls'
+import { SupportButton } from './SupportButton'
 import { Icons } from './icons'
 
 export function Header({ compact = false, actions }: { compact?: boolean; actions?: ReactNode }) {
@@ -23,6 +24,7 @@ export function Header({ compact = false, actions }: { compact?: boolean; action
       </div>
       <div className="flex items-center gap-2">
         {actions}
+        <SupportButton />
         <AuthControls />
         <button
           onClick={toggle}
