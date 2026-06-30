@@ -14,7 +14,7 @@ export function Header({ compact = false, actions }: { compact?: boolean; action
     >
       <div className="flex flex-col items-center gap-1 sm:items-start">
         <img
-          src="/img/Logo Dark v2.png"
+          src={theme === 'light' ? '/img/Logo Light v2.png' : '/img/Logo Dark v2.png'}
           alt="MENOOWEL — BrewLab Studio"
           className={compact ? 'h-9 w-auto' : 'h-14 w-auto sm:h-16'}
           width={4859}

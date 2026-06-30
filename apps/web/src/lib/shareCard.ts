@@ -1,6 +1,5 @@
 // Renders a branded, shareable "brew recipe card" PNG from the current settings.
-// Pure Canvas 2D — no dependencies. Portrait 1080x1500 (great for IG/WhatsApp/X).
-// Layout/spacing tuned to a consistent margin grid (designed + verified visually).
+// Pure Canvas 2D — no dependencies. Portrait 1080x1500. Theme- and language-aware.
 
 export interface ShareData {
   variety: string
@@ -24,9 +23,21 @@ export interface ShareData {
   yieldG: number
   tds: number
   ey: number
-  measured: boolean
-  strength: string
-  extraction: string
+}
+
+export interface ShareLabels {
+  brewRecipe: string
+  grinder: string
+  grind: string
+  dripper: string
+  filter: string
+  recipe: string
+  dose: string
+  ratio: string
+  water: string
+  temp: string
+  caption: string
+  cta: string
 }
 
 const W = 1080
@@ -34,10 +45,9 @@ const H = 1500
 const M = 80
 const CW = W - 2 * M
 
-const C = {
+const DARK = {
   bg: '#161311',
   red: '#E84B3D',
-  redDeep: '#D00600',
   teal: '#0bb3b3',
   text: '#f3efec',
   muted: '#a39c97',
@@ -47,17 +57,42 @@ const C = {
   card: 'rgba(255,255,255,0.04)',
   cardEdge: 'rgba(255,255,255,0.09)',
   tile: 'rgba(255,255,255,0.05)',
+  glowRed: 'rgba(232,75,61,0.30)',
+  glowTeal: 'rgba(6,148,148,0.26)',
+  footerFill: 'rgba(232,75,61,0.13)',
+  footerEdge: 'rgba(232,75,61,0.35)',
+}
+const LIGHT = {
+  bg: '#faf7f4',
+  red: '#E84B3D',
+  teal: '#069494',
+  text: '#2b2422',
+  muted: '#6f6a67',
+  faint: '#9b938d',
+  line: 'rgba(43,36,34,0.13)',
+  hair: 'rgba(43,36,34,0.07)',
+  card: 'rgba(43,36,34,0.035)',
+  cardEdge: 'rgba(43,36,34,0.11)',
+  tile: 'rgba(43,36,34,0.045)',
+  glowRed: 'rgba(232,75,61,0.14)',
+  glowTeal: 'rgba(6,148,148,0.12)',
+  footerFill: 'rgba(232,75,61,0.10)',
+  footerEdge: 'rgba(232,75,61,0.30)',
 }
 
 const fmtTime = (s: number) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, '0')}`
-const cap = (s: string) => (s ? s[0].toUpperCase() + s.slice(1) : s)
 
-export async function drawShareCard(d: ShareData): Promise<{ blob: Blob; url: string }> {
+export async function drawShareCard(
+  d: ShareData,
+  opts: { theme: 'light' | 'dark'; labels: ShareLabels },
+): Promise<{ blob: Blob; url: string }> {
   try {
     await (document as Document & { fonts?: { ready: Promise<unknown> } }).fonts?.ready
   } catch {
     /* ignore */
   }
+  const C = opts.theme === 'light' ? LIGHT : DARK
+  const { labels: T } = opts
 
   const canvas = document.createElement('canvas')
   canvas.width = W
@@ -106,8 +141,8 @@ export async function drawShareCard(d: ShareData): Promise<{ blob: Blob; url: st
     ctx.fillStyle = g
     ctx.fillRect(0, 0, W, H)
   }
-  glow(W - 40, 30, 620, 'rgba(232,75,61,0.30)')
-  glow(20, H - 30, 660, 'rgba(6,148,148,0.26)')
+  glow(W - 40, 30, 620, C.glowRed)
+  glow(20, H - 30, 660, C.glowTeal)
 
   let y = M
 
@@ -122,9 +157,9 @@ export async function drawShareCard(d: ShareData): Promise<{ blob: Blob; url: st
   y += 48
 
   // ---- hero ----
-  text('BREW RECIPE', M, y, font(18, 800), C.faint, 'left', 'top')
+  text(T.brewRecipe, M, y, font(18, 800), C.faint, 'left', 'top')
   y += 44
-  text(d.variety || 'Custom brew', M, y, font(58, 800), C.text, 'left', 'top', CW)
+  text(d.variety || 'Custom', M, y, font(58, 800), C.text, 'left', 'top', CW)
   y += 74
   const loc = [d.origin, d.region].filter(Boolean).join('  ·  ')
   text(loc || '—', M, y, font(27, 400), C.muted, 'left', 'top', CW)
@@ -135,11 +170,11 @@ export async function drawShareCard(d: ShareData): Promise<{ blob: Blob; url: st
 
   // ---- spec card ----
   const rows: [string, string][] = [
-    ['Grinder', d.grinder],
-    ['Grind', `${d.micron} µm${d.clicks ? ` · ${d.clicks}` : ''}`],
-    ['Dripper', d.dripper],
-    ['Filter', d.filter],
-    ['Recipe', `${d.recipeName}${d.author && d.author !== '—' ? ` — ${d.author}` : ''}`],
+    [T.grinder, d.grinder],
+    [T.grind, `${d.micron} µm${d.clicks ? ` · ${d.clicks}` : ''}`],
+    [T.dripper, d.dripper],
+    [T.filter, d.filter],
+    [T.recipe, `${d.recipeName}${d.author && d.author !== '—' ? ` — ${d.author}` : ''}`],
   ]
   const rowH = 68
   const padIn = 28
@@ -156,10 +191,10 @@ export async function drawShareCard(d: ShareData): Promise<{ blob: Blob; url: st
 
   // ---- stat strip ----
   const strip: [string, string][] = [
-    ['DOSE', `${d.dose} g`],
-    ['RATIO', `1:${d.ratio}`],
-    ['WATER', `${Math.round(d.totalWater)} g`],
-    ['TEMP', `${d.tempC}°C`],
+    [T.dose, `${d.dose} g`],
+    [T.ratio, `1:${d.ratio}`],
+    [T.water, `${Math.round(d.totalWater)} g`],
+    [T.temp, `${d.tempC}°C`],
   ]
   const sh = 120
   panel(M, y, CW, sh, 24, C.card, C.cardEdge)
@@ -188,15 +223,7 @@ export async function drawShareCard(d: ShareData): Promise<{ blob: Blob; url: st
     text(k, x + tw / 2, y + th - 40, font(20, 700), C.muted, 'center', 'middle')
   })
   y += th + 30
-  text(
-    `${d.measured ? 'Measured' : 'Predicted'}  ·  ${cap(d.strength)} strength  ·  ${cap(d.extraction)} extraction`,
-    W / 2,
-    y,
-    font(22, 600),
-    C.muted,
-    'center',
-    'top',
-  )
+  text(T.caption, W / 2, y, font(22, 600), C.muted, 'center', 'top', CW)
   y += 52
 
   // ---- pours timeline ----
@@ -222,8 +249,8 @@ export async function drawShareCard(d: ShareData): Promise<{ blob: Blob; url: st
   }
 
   // ---- footer CTA ----
-  panel(M, y, CW, 86, 20, 'rgba(232,75,61,0.12)', 'rgba(232,75,61,0.35)')
-  text('Dial in your own pour-over  →  menoowel.com', W / 2, y + 43, font(28, 700), C.text, 'center', 'middle')
+  panel(M, y, CW, 86, 20, C.footerFill, C.footerEdge)
+  text(T.cta, W / 2, y + 43, font(28, 700), C.text, 'center', 'middle')
 
   const blob: Blob = await new Promise((res) => canvas.toBlob((b) => res(b!), 'image/png'))
   return { blob, url: canvas.toDataURL('image/png') }

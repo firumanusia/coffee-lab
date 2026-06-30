@@ -5,13 +5,15 @@ import { extractionOf, strengthOf } from '../model/sca'
 import { roastFromAgtron } from '../data/roast'
 import { suggestSetting } from '../data/grindLogic'
 import { useLocalized, useT } from '../i18n/LanguageContext'
+import { useTheme } from '../i18n/ThemeContext'
 import type { BrewStore } from '../store/useBrewStore'
-import { drawShareCard, type ShareData } from '../lib/shareCard'
+import { drawShareCard, type ShareData, type ShareLabels } from '../lib/shareCard'
 import { Modal } from './Modal'
 
 export function ShareButton({ store, variant = 'block' }: { store: BrewStore; variant?: 'block' | 'icon' }) {
-  const { t } = useT()
+  const { t, lang } = useT()
   const L = useLocalized()
+  const { theme } = useTheme()
   const { config } = store
   const { beans, grinders, drippers, filters, recipes } = useCatalog()
   const gear = useGear(config)
@@ -19,17 +21,18 @@ export function ShareButton({ store, variant = 'block' }: { store: BrewStore; va
   const [busy, setBusy] = useState(false)
   const [img, setImg] = useState<{ url: string; blob: Blob } | null>(null)
 
-  const build = (): ShareData => {
+  const buildData = (): { data: ShareData; labels: ShareLabels } => {
     const p = predict(config, gear)
     const bean = beans.find((b) => b.id === config.beanId)
     const grinder = grinders.find((g) => g.id === config.grinderId)
-    const dripper = drippers.find((d) => d.id === config.dripperId)
+    const dripper = drippers.find((dd) => dd.id === config.dripperId)
     const filter = filters.find((f) => f.id === config.filterId)
     const recipe = recipes.find((r) => r.id === config.recipeId)
     const roast = roastFromAgtron(config.agtron)
     const clicks = grinder ? suggestSetting(grinder, config.micron) : null
     const totalWater = config.dose * config.ratio
-    return {
+
+    const data: ShareData = {
       variety: bean?.variety ?? 'Custom',
       origin: bean?.origin ?? '',
       region: bean?.region ?? '',
@@ -38,7 +41,7 @@ export function ShareButton({ store, variant = 'block' }: { store: BrewStore; va
       agtron: config.agtron,
       grinder: grinder ? `${grinder.brand} ${grinder.model}` : '—',
       micron: config.micron,
-      clicks: clicks === null ? '' : `~${clicks} clicks`,
+      clicks: clicks === null ? '' : `~${clicks} ${t('cardClicks')}`,
       dripper: dripper ? `${dripper.brand} ${dripper.model}` : '—',
       filter: filter ? `${filter.brand} ${filter.model}` : '—',
       recipeName: recipe?.name ?? 'Custom',
@@ -51,18 +54,41 @@ export function ShareButton({ store, variant = 'block' }: { store: BrewStore; va
       yieldG: p.beverageMass,
       tds: p.tds,
       ey: p.ey,
-      measured: p.source === 'measured',
-      strength: strengthOf(p.tds),
-      extraction: extractionOf(p.ey),
     }
+
+    const s = strengthOf(p.tds)
+    const x = extractionOf(p.ey)
+    const sWord = (s === 'ideal' ? t('cardIdeal') : s === 'weak' ? t('weak') : t('strong')).toLowerCase()
+    const xWord = (x === 'ideal' ? t('cardIdeal') : x === 'under' ? t('underExtracted') : t('overExtracted')).toLowerCase()
+    const predWord = p.source === 'measured' ? t('measured') : t('predicted')
+    const caption =
+      lang === 'id'
+        ? `${predWord}  ·  kekuatan ${sWord}  ·  ekstraksi ${xWord}`
+        : `${predWord}  ·  ${sWord} strength  ·  ${xWord} extraction`
+
+    const labels: ShareLabels = {
+      brewRecipe: t('cardBrewRecipe'),
+      grinder: t('cardGrinder'),
+      grind: t('cardGrind'),
+      dripper: t('cardDripper'),
+      filter: t('cardFilter'),
+      recipe: t('cardRecipe'),
+      dose: t('cardDose'),
+      ratio: t('cardRatio'),
+      water: t('cardWater'),
+      temp: t('cardTemp'),
+      caption,
+      cta: t('cardCta'),
+    }
+    return { data, labels }
   }
 
   const openModal = async () => {
     setBusy(true)
     setOpen(true)
     try {
-      const res = await drawShareCard(build())
-      setImg(res)
+      const { data, labels } = buildData()
+      setImg(await drawShareCard(data, { theme, labels }))
     } finally {
       setBusy(false)
     }
