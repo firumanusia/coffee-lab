@@ -5,6 +5,7 @@ import type { BrewStore } from '../../store/useBrewStore'
 import { Panel } from '../ui'
 import { Icons } from '../icons'
 import { SCAChart } from './SCAChart'
+import { ShareButton } from '../ShareButton'
 
 export function ResultCards({ store }: { store: BrewStore }) {
   const { t } = useT()
@@ -78,6 +79,8 @@ export function ResultCards({ store }: { store: BrewStore }) {
           </li>
         ))}
       </ul>
+
+      <ShareButton store={store} />
     </Panel>
   )
 }

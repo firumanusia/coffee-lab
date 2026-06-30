@@ -86,6 +86,11 @@ export const STR: Dict = {
   feedbackEmail: { id: 'Email (opsional — agar bisa kami balas)', en: 'Email (optional — so we can reply)' },
   feedbackSend: { id: 'Kirim', en: 'Send' },
   feedbackThanks: { id: 'Terima kasih atas masukanmu! 🙏', en: 'Thanks for your feedback! 🙏' },
+  shareRecipe: { id: 'Bagikan kartu resep', en: 'Share recipe card' },
+  shareCardTitle: { id: 'Kartu Resep', en: 'Recipe Card' },
+  download: { id: 'Unduh', en: 'Download' },
+  shareImg: { id: 'Bagikan', en: 'Share' },
+  generating: { id: 'Membuat gambar…', en: 'Generating image…' },
 
   // dripper / filter
   dripperType: { id: 'Tipe', en: 'Type' },
