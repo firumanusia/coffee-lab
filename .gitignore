@@ -15,3 +15,8 @@ build
 secrets/
 scripts/secrets/
 *.apps.googleusercontent.com.json
+
+# stray data exports
+samawo-*.csv
+samawo-*.xls
+*.xls
